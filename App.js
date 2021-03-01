@@ -4,18 +4,18 @@ import SettingsScreen from './Components/SettingsScreen'
 import LastDriveScreen from './Components/LastDriveScreen'
 import { StatusBar, StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen name="Home" component={HomeScreen} />
-				<Stack.Screen name="Settings" component={SettingsScreen} />
-				<Stack.Screen name="Last Drive" component={LastDriveScreen} />
-			</Stack.Navigator>
+			<Tab.Navigator>
+				<Tab.Screen name="Home" component={HomeScreen} />
+				<Tab.Screen name="Last Drive" component={LastDriveScreen} />
+				<Tab.Screen name="Settings" component={SettingsScreen} />
+			</Tab.Navigator>
 		</NavigationContainer>
   );
 }

@@ -8,7 +8,6 @@ function LastDriveScreen( { navigation } ) {
   return (
     <View style={styles.container}>
 			<Text>This is the Last Drive Screen.</Text>
-			<Footer/>
     </View>
   );
 }

@@ -8,7 +8,6 @@ function SettingsScreen( { navigation } ) {
   return (
     <View style={styles.container}>
 			<Text>This is the Settings Screen.</Text>
-			<Footer/>
     </View>
   );
 }

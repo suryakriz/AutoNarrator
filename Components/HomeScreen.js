@@ -9,7 +9,6 @@ function HomeScreen( { navigation } ) {
     <View style={styles.container}>
       <Text>Welcome to AutoNarrator!</Text>
 			<Text>This is the Home Page.</Text>
-			<Footer/>
     </View>
 
 			
