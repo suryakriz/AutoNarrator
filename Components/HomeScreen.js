@@ -32,8 +32,8 @@ class HomeScreen extends React.Component {
 		
 		const htmlString = await response.text();
 		const cheerioResult = cheerio.load(htmlString);
-		console.log("Testing" + cheerioResult);
-		this.setState({webText: htmlString}); 
+		console.log(cheerioResult('ol').text());
+		//this.setState({webText: htmlString}); 
 	}
 }
 
