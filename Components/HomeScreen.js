@@ -1,17 +1,14 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 function HomeScreen( { navigation } ) {
   return (
-    <View style={styles.container}>
+      <View style={styles.container}>
       <Text>Welcome to AutoNarrator!</Text>
 			<Text>This is the Home Page.</Text>
     </View>
-
-			
-
   );
 }
 

@@ -2,12 +2,16 @@ import * as React from 'react';
 import HomeScreen from './Components/HomeScreen'
 import SettingsScreen from './Components/SettingsScreen'
 import LastDriveScreen from './Components/LastDriveScreen'
-import { StatusBar, StyleSheet, View, Text } from 'react-native';
+import { StatusBar, StyleSheet, View, Text, SafeAreaView, Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { HeaderTitle } from '@react-navigation/stack';
+import Title from "./assets/Title.png";
 
 const Tab = createBottomTabNavigator();
+
+
 
 //BOTTOM TAB STUFF
 function MyTabs() {
@@ -59,9 +63,12 @@ function MyTabs() {
 //ACTUALLY CALLING THE APP 
 function App() {
   return (
-    <NavigationContainer>
-			<MyTabs />
-		</NavigationContainer>
+    <View style= {{ width: "100%", height: "100%"}}>
+      <Image source={require("./assets/Title.png")} style={{resizeMode: "contain",height: "10%", backgroundColor : '#529bcc'}}/>
+      <NavigationContainer>
+		  	<MyTabs />
+		  </NavigationContainer>
+    </View>
   );
 }
 
