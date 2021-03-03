@@ -64,7 +64,10 @@ function MyTabs() {
 function App() {
   return (
     <View style= {{ width: "100%", height: "100%"}}>
-      <Image source={require("./assets/Title.png")} style={{resizeMode: "contain",height: "10%", backgroundColor : '#529bcc'}}/>
+      <View style= {styles.header}>
+        <View style = {{height: "15%"}} />
+        <Image source={require("./assets/Title.png")} style={styles.title}/>
+      </View>
       <NavigationContainer>
 		  	<MyTabs />
 		  </NavigationContainer>
@@ -78,6 +81,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header:{
+    alignItems: 'center',  
+    width: "100%", 
+    height: "15%", 
+    backgroundColor: '#529bcc',
+  },
+  title: {
+    resizeMode: "contain",
+    height: "70%",
   },
 });
 
