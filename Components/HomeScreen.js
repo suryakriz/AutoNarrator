@@ -3,6 +3,7 @@ import { Button, StyleSheet, View, Text } from 'react-native';
 import { loadNearMePage } from '../backend/WebScraping';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { not } from 'react-native-reanimated';
 
 class HomeScreen extends React.Component {
 	constructor(props) {
@@ -26,25 +27,40 @@ class HomeScreen extends React.Component {
 	}
 	
 	async loadWebData() {
+		var notVisited = true;
 		//put together the longitude and latitude of a current location
-		const longitude = '-96.334643';
-		const latitude = '30.592205';
+		var longitude = '-96.334643';
+		var latitude = '30.592205';
 		//pull the list of locations from the longitude and latitiude 
 		const cheerio = require('cheerio');
 		const searchUrl = 'https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=' + latitude + '&Longitude=' + longitude + '&submit=Show+List' ;
-		const response = await fetch(searchUrl);
-		const htmlString = await response.text();
+		var response = await fetch(searchUrl);
+		var htmlString = await response.text();
 		const listOfLocations = cheerio.load(htmlString)('a:even', 'li');
 		console.log('------------------------------------------------');
 		for(var i = 0; i < listOfLocations.length; i++) {
 			console.log(listOfLocations.eq(i).text()); // logs individual sections
+			if (notVisited){
+				const locationUrl = 'https://www.hmdb.org/' + listOfLocations.eq(i).attr('href')
+				response = await fetch(locationUrl);
+				htmlString = await response.text();
+				const htmlOnPage = cheerio.load(htmlString)('article');
+				console.log("INFO ON PAGE");
+				console.log(htmlOnPage.text());
+				notVisited = false;
+			}
+			console.log('https://www.hmdb.org/' + listOfLocations.eq(i).attr('href'));
 		}
 		console.log('------------------------------------------------');
 		
-		const listOfDistances = cheerio.load(htmlString)("");
-		for(var i = 0; i < listOfDistances.length; i++) {
-			console.log(listOfDistances.eq(i).text()); // logs individual sections
-		}
+
+		
+
+
+		//const listOfDistances = cheerio.load(htmlString)("");
+		//for(var i = 0; i < listOfDistances.length; i++) {
+		//	console.log(listOfDistances.eq(i).text()); // logs individual sections
+		//}
 		console.log('------------------------------------------------');
 	}
 }
