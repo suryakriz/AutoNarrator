@@ -26,14 +26,26 @@ class HomeScreen extends React.Component {
 	}
 	
 	async loadWebData() {
+		//put together the longitude and latitude of a current location
+		const longitude = '-96.334643';
+		const latitude = '30.592205';
+		//pull the list of locations from the longitude and latitiude 
 		const cheerio = require('cheerio');
-		const searchUrl = 'https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=30.6155318&Longitude=-96.3333562&submit=Show+List';
+		const searchUrl = 'https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=' + latitude + '&Longitude=' + longitude + '&submit=Show+List' ;
 		const response = await fetch(searchUrl);
-		
 		const htmlString = await response.text();
-		const cheerioResult = cheerio.load(htmlString);
-		console.log(cheerioResult('ol').text());
-		//this.setState({webText: htmlString}); 
+		const listOfLocations = cheerio.load(htmlString)('a:even', 'li');
+		console.log('------------------------------------------------');
+		for(var i = 0; i < listOfLocations.length; i++) {
+			console.log(listOfLocations.eq(i).text()); // logs individual sections
+		}
+		console.log('------------------------------------------------');
+		
+		const listOfDistances = cheerio.load(htmlString)("");
+		for(var i = 0; i < listOfDistances.length; i++) {
+			console.log(listOfDistances.eq(i).text()); // logs individual sections
+		}
+		console.log('------------------------------------------------');
 	}
 }
 
