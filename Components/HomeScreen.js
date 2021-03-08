@@ -38,7 +38,6 @@ class HomeScreen extends React.Component {
 		var response = await fetch(searchUrl);
 		var htmlString = await response.text();
 		const listOfLocations = cheerio.load(htmlString)('a:even', 'li');
-		console.log('------------------------------------------------');
 		for(var i = 0; i < listOfLocations.length; i++) {
 			console.log(listOfLocations.eq(i).text()); // logs individual sections
 			if (notVisited){
@@ -47,12 +46,9 @@ class HomeScreen extends React.Component {
 				htmlString = await response.text();
 				//INFORMATION TO BE READ BY THE READER
 				var landmarkInfo = cheerio.load(htmlString)('#inscription1').text();
-				//console.log("INFO ON PAGE");
-				//console.log(landmarkInfo);
-				notVisited = false;
+				return landmarkInfo;
 			}
 		}
-		console.log('------------------------------------------------');
 	}
 }
 
