@@ -39,12 +39,10 @@ export default class TTS extends Component {
   }
 
   speak() {
+    //if displaying play button then once it is pressed start speaking
     if (this.state.index == 0) {
-      const options = {};
-      var play = true;
       const thingToSay = "Welcome, to today's text to speech demo";
       Speech.speak(thingToSay, { voice: "en-GB-language" });
-      play = false;
       var listSpeech = [];
       ttsList()
         .then((result) => {
@@ -53,6 +51,7 @@ export default class TTS extends Component {
           listSpeech = result;
           //Speak sample text in all of the various voices
           for (var i = 0; i < listSpeech.length; i++) {
+            //uncomment to start speaking sample text in all of the languages
             //Speech.speak(thingToSay, {voice: listSpeech[i]});
           }
         })
