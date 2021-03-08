@@ -27,6 +27,7 @@ class HomeScreen extends React.Component {
 	}
 	
 	async loadWebData() {
+		//notVisited 
 		var notVisited = true;
 		//put together the longitude and latitude of a current location
 		var longitude = '-96.334643';
@@ -41,26 +42,16 @@ class HomeScreen extends React.Component {
 		for(var i = 0; i < listOfLocations.length; i++) {
 			console.log(listOfLocations.eq(i).text()); // logs individual sections
 			if (notVisited){
-				const locationUrl = 'https://www.hmdb.org/' + listOfLocations.eq(i).attr('href')
+				const locationUrl = 'https://www.hmdb.org/' + listOfLocations.eq(i).attr('href') //website of the 
 				response = await fetch(locationUrl);
 				htmlString = await response.text();
-				const htmlOnPage = cheerio.load(htmlString)('article');
-				console.log("INFO ON PAGE");
-				console.log(htmlOnPage.text());
+				//INFORMATION TO BE READ BY THE READER
+				var landmarkInfo = cheerio.load(htmlString)('#inscription1').text();
+				//console.log("INFO ON PAGE");
+				//console.log(landmarkInfo);
 				notVisited = false;
 			}
-			console.log('https://www.hmdb.org/' + listOfLocations.eq(i).attr('href'));
 		}
-		console.log('------------------------------------------------');
-		
-
-		
-
-
-		//const listOfDistances = cheerio.load(htmlString)("");
-		//for(var i = 0; i < listOfDistances.length; i++) {
-		//	console.log(listOfDistances.eq(i).text()); // logs individual sections
-		//}
 		console.log('------------------------------------------------');
 	}
 }
