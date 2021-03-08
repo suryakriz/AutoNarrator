@@ -58,6 +58,8 @@ export default class TTS extends Component {
         .catch((err) => {
           console.log("error");
         });
+    } else {
+      Speech.stop();
     }
   }
 
@@ -85,6 +87,7 @@ export default class TTS extends Component {
             this.speak();
             this.Load_New_Image();
           }}
+          style={styles.buttonContainer}
         >
           <Image source={this.state.pic} style={styles.image} />
         </TouchableOpacity>
@@ -98,6 +101,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonContainer: {
+    borderRadius: 100,
   },
   image: {
     resizeMode: "contain",
