@@ -4,7 +4,7 @@ import { loadNearMePage } from '../backend/WebScraping';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { not } from 'react-native-reanimated';
-
+import TTS from "../TextToSpeech/TTS";
 class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
@@ -18,6 +18,7 @@ class HomeScreen extends React.Component {
 			<View style={styles.container}>
 				<Text>Welcome to AutoNarrator!</Text>
 				<Text>{this.state.webText}</Text>
+				<TTS />
 				<Button
 					onPress={this.loadWebData}
 					title="Load Page"
