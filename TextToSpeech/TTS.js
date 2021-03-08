@@ -86,7 +86,7 @@ export default class TTS extends Component {
             this.Load_New_Image();
           }}
         >
-          <Image source={this.state.pic} style={styles.button} />
+          <Image source={this.state.pic} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -99,9 +99,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  button: {
-    backgroundColor: "red",
-    borderRadius: 100,
-    padding: 100,
+  image: {
+    resizeMode: "contain",
+    height: "70%",
   },
 });
