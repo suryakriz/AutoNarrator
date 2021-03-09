@@ -30,8 +30,7 @@ async function ttsList() {
 export default class TTS extends Component {
   constructor() {
     super();
-    const imageBool = true;
-    const count = 0;
+    var imageBool = true;
     this.state = {
       pic: require("../assets/play_button.png"),
       index: 0,
