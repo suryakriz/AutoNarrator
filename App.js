@@ -2,7 +2,7 @@ import * as React from 'react';
 import HomeScreen from './Components/HomeScreen'
 import SettingsScreen from './Components/SettingsScreen'
 import LastDriveScreen from './Components/LastDriveScreen'
-import { StatusBar, StyleSheet, View, Text, SafeAreaView, Image} from 'react-native';
+import { StatusBar, StyleSheet, View, Text, SafeAreaView, Image, Alert} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +11,9 @@ import Title from "./assets/Title.png";
 
 const Tab = createBottomTabNavigator();
 
-
+state = {
+  location: null
+};
 
 //BOTTOM TAB STUFF
 function MyTabs() {
@@ -59,14 +61,28 @@ function MyTabs() {
   );
 }
 
+findCoordinates = () =>
+{
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const location = JSON.stringify(position);
 
+        this.setState({location});
+      },
+      error => Alert.alert(error.message),
+      { enableHighAccuracy : true, timeout: 20000, maximumAge: 1000}
+    );
+    
+};
 //ACTUALLY CALLING THE APP 
 function App() {
+  console.log(this.state.location);
   return (
     <View style= {{ width: "100%", height: "100%"}}>
       <View style= {styles.header}>
         <View style = {{height: "15%"}} />
         <Image source={require("./assets/Title.png")} style={styles.title}/>
+        <Text>Location: {this.state.location}</Text>
       </View>
       <NavigationContainer>
 		  	<MyTabs />
