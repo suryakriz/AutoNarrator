@@ -27,7 +27,7 @@ async function ttsList() {
   }
 }
 
-export default class TTS extends Component {
+export default class TTS_Utils {
   constructor() {
     super();
     var imageBool = true;
@@ -35,6 +35,8 @@ export default class TTS extends Component {
       pic: require("../assets/play_button.png"),
       index: 0,
     };
+    this.speak = this.speak.bind(this);
+    this.Load_New_Image = this.Load_New_Image.bind(this);
   }
 
   speak() {
