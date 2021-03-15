@@ -33,7 +33,7 @@ export default class TTS extends Component {
     const imageBool = true;
     const count = 0;
     this.state = {
-      pic: require("../assets/play_button.png"),
+      pic: require("../assets/PlayButton.png"),
       index: 0,
     };
   }
@@ -71,13 +71,13 @@ export default class TTS extends Component {
     if (this.imageBool) {
       this.imageBool = false;
       this.setState({
-        pic: require("../assets/play_button.png"),
+        pic: require("../assets/PlayButton.png"),
         index: 0,
       });
     } else {
       this.imageBool = true;
       this.setState({
-        pic: require("../assets/pause_button.jpg"),
+        pic: require("../assets/StopButton.png"),
         index: 1,
       });
     }
@@ -108,9 +108,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
     resizeMode: "contain",
     height: "70%",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

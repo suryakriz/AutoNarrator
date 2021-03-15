@@ -3,8 +3,8 @@ import { Button, StyleSheet, View, Text } from 'react-native';
 import { loadNearMePage } from '../backend/WebScraping';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { not } from 'react-native-reanimated';
 import TTS from "../TextToSpeech/TTS";
-
 class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
@@ -28,14 +28,28 @@ class HomeScreen extends React.Component {
 	}
 	
 	async loadWebData() {
+		//notVisited 
+		var notVisited = true;
+		//put together the longitude and latitude of a current location
+		var longitude = '-96.334643';
+		var latitude = '30.592205';
+		//pull the list of locations from the longitude and latitiude 
 		const cheerio = require('cheerio');
-		const searchUrl = 'https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=30.6155318&Longitude=-96.3333562&submit=Show+List';
-		const response = await fetch(searchUrl);
-		
-		const htmlString = await response.text();
-		const cheerioResult = cheerio.load(htmlString);
-		console.log(cheerioResult('ol').text());
-		//this.setState({webText: htmlString}); 
+		const searchUrl = 'https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=' + latitude + '&Longitude=' + longitude + '&submit=Show+List' ;
+		var response = await fetch(searchUrl);
+		var htmlString = await response.text();
+		const listOfLocations = cheerio.load(htmlString)('a:even', 'li');
+		for(var i = 0; i < listOfLocations.length; i++) {
+			console.log(listOfLocations.eq(i).text()); // logs individual sections
+			if (notVisited){
+				const locationUrl = 'https://www.hmdb.org/' + listOfLocations.eq(i).attr('href') //website of the 
+				response = await fetch(locationUrl);
+				htmlString = await response.text();
+				//INFORMATION TO BE READ BY THE READER
+				var landmarkInfo = cheerio.load(htmlString)('#inscription1').text();
+				return landmarkInfo;
+			}
+		}
 	}
 }
 
