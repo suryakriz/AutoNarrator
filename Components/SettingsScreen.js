@@ -17,7 +17,6 @@ async function ttsList() {
         });
       }
     }
-    //console.log(returnList);
     return returnList;
   } catch (e) {
     console.log(e);
