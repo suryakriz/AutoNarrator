@@ -58,33 +58,11 @@ export default class SettingsScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>This is the Settings Screen.</Text>
-        <Text style={styles.text}>
-          {this.state.rate && +this.state.rate.toFixed(3)}
-        </Text>
-        <Slider
-          step={0.5}
-          style={styles.slider}
-          onValueChange={(rate) => this.setState({ rate: rate })}
-          minimumValue={0}
-          maximumValue={2}
-          value={this.state.rate}
-        />
-        <Text style={styles.text}>
-          {this.state.pitch && +this.state.pitch.toFixed(3)}
-        </Text>
-        <Slider
-          step={0.5}
-          style={styles.slider}
-          onValueChange={(pitch) => this.setState({ pitch: pitch })}
-          minimumValue={0}
-          maximumValue={2}
-          value={this.state.pitch}
-        />
+        <Text>Voice:</Text>
         <DropDownPicker
           items={this.state.vList}
           defaultValue={this.state.voice}
-          containerStyle={{ height: 40, width: "50%" }}
+          containerStyle={{ height: 40, width: "50%", marginBottom: 10 }}
           style={{ backgroundColor: "#fafafa" }}
           itemStyle={{
             justifyContent: "flex-start",
@@ -95,6 +73,28 @@ export default class SettingsScreen extends Component {
               voice: item.value,
             })
           }
+        />
+        <Text>
+          Voice Rate of Speech: {this.state.rate && +this.state.rate.toFixed(3)}
+        </Text>
+        <Slider
+          step={0.5}
+          style={styles.slider}
+          onValueChange={(rate) => this.setState({ rate: rate })}
+          minimumValue={0}
+          maximumValue={2}
+          value={this.state.rate}
+        />
+        <Text>
+          Voice Pitch: {this.state.pitch && +this.state.pitch.toFixed(3)}
+        </Text>
+        <Slider
+          step={0.5}
+          style={styles.slider}
+          onValueChange={(pitch) => this.setState({ pitch: pitch })}
+          minimumValue={0}
+          maximumValue={2}
+          value={this.state.pitch}
         />
       </View>
     );
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     width: 300,
     opacity: 1,
     height: 50,
-    marginTop: 50,
+    marginTop: 0,
   },
   text: {
     fontSize: 14,
