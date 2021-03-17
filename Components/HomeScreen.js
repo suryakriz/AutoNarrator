@@ -4,7 +4,12 @@ import { loadNearMePage } from '../backend/WebScraping';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { not } from 'react-native-reanimated';
+import { useDispatch } from 'react-redux'
+import { VisitedListAdd } from '../Redux/VisitedSlice'
+import store from '../Redux/Store'
 import TTS from "../TextToSpeech/TTS";
+
+
 class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
@@ -47,6 +52,7 @@ class HomeScreen extends React.Component {
 				htmlString = await response.text();
 				//INFORMATION TO BE READ BY THE READER
 				var landmarkInfo = cheerio.load(htmlString)('#inscription1').text();
+				this.props.dispatch(VisitedListAdd(landmarkInfo))
 				return landmarkInfo;
 			}
 		}
@@ -62,4 +68,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default () => {
+	const dispatch = useDispatch();
+	return (
+		<HomeScreen dispatch={dispatch}/>
+	)
+}
