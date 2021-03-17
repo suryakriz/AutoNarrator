@@ -3,6 +3,8 @@ import { StyleSheet, View, Text } from "react-native";
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
+import { SetVoice } from '../Redux/SettingsSlice'
+import { useDispatch } from 'react-redux'
 import Icon from 'react-native-ico-flags';
 
 
@@ -10,7 +12,7 @@ function DropdownItem(label) {
   this.label = label;
 }
 
-export default class SettingsScreen extends Component {
+class SettingsScreen extends Component {
   constructor() {
     super();
     var voiceList = [
@@ -62,6 +64,8 @@ export default class SettingsScreen extends Component {
       voice: "en-us-x-sfg#female_3-local",
       vList: voiceList,
     };
+
+    this.ChangeVoice = this.ChangeVoice.bind(this)
   }
 
   render() {
@@ -77,11 +81,7 @@ export default class SettingsScreen extends Component {
             justifyContent: "flex-start",
           }}
           dropDownStyle={{ backgroundColor: "#fafafa" }}
-          onChangeItem={(item) =>
-            this.setState({
-              voice: item.value,
-            })
-          }
+          onChangeItem={(item) => this.ChangeVoice(item)}
         />
         <Text>
           Voice Rate of Speech: {this.state.rate && +this.state.rate.toFixed(3)}
@@ -108,6 +108,21 @@ export default class SettingsScreen extends Component {
       </View>
     );
   }
+
+  ChangeVoice(newVoice) {
+    this.setState({
+      voice: newVoice.value,
+    })
+    this.props.dispatch(SetVoice(newVoice.value))
+  }
+  
+}
+
+export default () => {
+	const dispatch = useDispatch();
+	return (
+		<SettingsScreen dispatch={dispatch}/>
+	)
 }
 
 const styles = StyleSheet.create({

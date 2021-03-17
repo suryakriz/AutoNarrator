@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     talkSpeed: 1,
-    voiceName: 'en-gb-x-gba-local',
+    voiceName: 'en-us-x-sfg#female_3-local',
     voiceGender: 'male',
     timeBetween: 30
 }
@@ -12,10 +12,10 @@ const SettingsSlice = createSlice({
     initialState,
     reducers: {
         ToggleGender(state, action) {
-            voiceGender = action.payload
+            state.voiceGender = action.payload
         },
         SetVoice(state, action) {
-            voiceName = action.payload
+            state.voiceName = action.payload
         }
     }
 })

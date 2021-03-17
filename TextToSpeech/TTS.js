@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as Speech from "expo-speech";
+import { connect } from "react-redux";
 
 async function ttsList() {
   try {
@@ -27,7 +28,7 @@ async function ttsList() {
   }
 }
 
-export default class TTS extends Component {
+class TTS extends Component {
   constructor() {
     super();
     const imageBool = true;
@@ -52,11 +53,11 @@ export default class TTS extends Component {
           listSpeech = result;
           //Speak sample text in all of the various voices
           console.log(listSpeech);
-          for (var i = 0; i < listSpeech.length; i++) {
+          for (var i = 0; i < 1; i++) {
             //uncomment to start speaking sample text in all of the languages
             //console.log(listSpeech[i]);
-            thingToSay = "Today, we will be testing voice: " + listSpeech[i];
-            Speech.speak(thingToSay, { voice: listSpeech[i] });
+            thingToSay = "Today, we will be testing voice: " + this.props.voice;
+            Speech.speak(thingToSay, { voice: this.props.voice });
           }
         })
         .catch((err) => {
@@ -99,6 +100,15 @@ export default class TTS extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    voice: state.settings.voiceName
+  }
+}
+
+export default connect(mapStateToProps)(TTS)
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
