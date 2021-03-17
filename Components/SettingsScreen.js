@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-ico-flags';
 
 
 function DropdownItem(label) {
@@ -16,41 +16,50 @@ export default class SettingsScreen extends Component {
     var voiceList = [
       {
         label: "US - Male",
-        value: "en-GB-language",
+        value: "en-us-x-sfg#male_3-local",
+        icon: () => <Icon name="united-states-of-america" size={18} />
       },
       {
         label: "US - Female",
-        value: "en-GB-language",
+        value: "en-us-x-sfg#female_3-local",
+        icon: () => <Icon name="united-states-of-america" size={18}/>
       },
       {
         label: "UK - Male",
-        value: "en-GB-language",
+        value: "en-gb-x-rjs-network",
+        icon: () => <Icon name="united-kingdom" size={18}/>
       },
       {
         label: "UK - Female",
-        value: "en-GB-language",
+        value: "en-gb-x-fis-local",
+        icon: () => <Icon name="united-kingdom" size={18} />
       },
       {
         label: "AUS - Male",
-        value: "en-GB-language",
+        value: "en-au-x-aub-network",
+        icon: () => <Icon name="australia" size={18}/>
       },
       {
-        label: "AUS - Male",
-        value: "en-GB-language",
+        label: "AUS - Female",
+        value: "en-au-x-auc-network",
+        icon: () => <Icon name="australia" size={18} />
       },
       {
         label: "IND - Male",
-        value: "en-GB-language",
+        value: "en-in-x-cxx#male_1-local",
+        icon: () => <Icon name="india" size={18} />
       },
       {
         label: "IND - Female",
-        value: "en-GB-language",
+        value: "en-in-x-cxx-network",
+        icon: () => <Icon name="india" size={18} />
       },
     ];
+
     this.state = {
       rate: 1.0,
       pitch: 1.0,
-      voice: "en-GB-language",
+      voice: "en-us-x-sfg#female_3-local",
       vList: voiceList,
     };
   }
