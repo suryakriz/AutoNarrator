@@ -12,6 +12,37 @@ import {
 import { connect, useDispatch } from "react-redux";
 import * as Speech from "expo-speech";
 
+async function loadWebData() {
+  //notVisited
+  var notVisited = true;
+  //put together the longitude and latitude of a current location
+  var longitude = "-96.334643";
+  var latitude = "30.592205";
+  //pull the list of locations from the longitude and latitiude
+  const cheerio = require("cheerio");
+  const searchUrl =
+    "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+    latitude +
+    "&Longitude=" +
+    longitude +
+    "&submit=Show+List";
+  var response = await fetch(searchUrl);
+  var htmlString = await response.text();
+  const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+  for (var i = 0; i < listOfLocations.length; i++) {
+    console.log(listOfLocations.eq(i).text()); // logs individual sections
+    if (notVisited) {
+      const locationUrl =
+        "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
+      response = await fetch(locationUrl);
+      htmlString = await response.text();
+      //INFORMATION TO BE READ BY THE READER
+      var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
+      return landmarkInfo;
+    }
+  }
+}
+
 async function ttsList() {
   try {
     let r1 = await Speech.getAvailableVoicesAsync();
