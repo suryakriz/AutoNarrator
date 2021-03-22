@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { connect, useDispatch } from "react-redux";
 import * as Speech from "expo-speech";
 
 async function ttsList() {
@@ -39,14 +40,14 @@ class HomeScreen extends React.Component {
       index: 0,
       topText: "Start Your Drive To Begin Learning About Your Local History",
       bottomText: "Press Here To Start Drive",
+	  timeBetween: this.props.timeBetween
     };
   }
 
   speak() {
     if (this.state.index == 0) {
       var thingToSay = "Today, we will be testing voice:";
-
-      Speech.speak(thingToSay, { voice: this.props.voice });
+      Speech.speak(thingToSay, { voice: this.props.voice, rate: this.props.speed });
       /*ttsList()
         .then((result) => {
           console.log(result);
@@ -115,11 +116,13 @@ class HomeScreen extends React.Component {
 
 function mapStateToProps(state) {
 	return {
-	  voice: state.settings.voiceName
+	  voice: state.settings.voiceName,
+	  speed: state.settings.talkSpeed,
+	  timeBetween: state.settings.timeBetween
 	}
 }
   
-export default connect(mapStateToProps)(TTS)
+export default connect(mapStateToProps)(HomeScreen)
 
 const styles = StyleSheet.create({
   container: {
@@ -151,13 +154,9 @@ const styles = StyleSheet.create({
   },
 });
 
-<<<<<<< HEAD
-export default () => {
+function Home() {
 	const dispatch = useDispatch();
 	return (
 		<HomeScreen dispatch={dispatch}/>
 	)
 }
-=======
-export default HomeScreen;
->>>>>>> 71ee13f05566b65f669e1d245ee0207dd91b0b9d

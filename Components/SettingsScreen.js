@@ -3,7 +3,7 @@ import { Button, StyleSheet, View, Text, Alert } from "react-native";
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
-import { SetVoice } from '../Redux/SettingsSlice'
+import { SetVoice, SetSpeed, SetTimeBetween } from '../Redux/SettingsSlice'
 import { useDispatch } from 'react-redux'
 import Icon from 'react-native-ico-flags';
 import Icon2 from 'react-native-ico-ui-interface';
@@ -151,10 +151,7 @@ class SettingsScreen extends Component {
             }}
             dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
             onChangeItem={(item) =>
-              this.setState({
-                voice: item.value,
-                label: item.label,
-              })
+              this.ChangeVoice(item)
             }
           />
         </View>
@@ -165,7 +162,7 @@ class SettingsScreen extends Component {
           <Slider
             step={0.5}
             style={styles.slider}
-            onValueChange={(rate) => this.setState({ rate: rate })}
+            onValueChange={(rate) => this.ChangeSpeed(rate)}
             minimumValue={0.5}
             maximumValue={3.5}
             value={this.state.rate}
@@ -200,9 +197,7 @@ class SettingsScreen extends Component {
             }}
             dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
             onChangeItem={(item) =>
-              this.setState({
-                time: item.value
-              })
+              this.ChangeTimeBetween(item)
             }
           />
         </View>
@@ -226,8 +221,21 @@ class SettingsScreen extends Component {
   ChangeVoice(newVoice) {
     this.setState({
       voice: newVoice.value,
+      label: newVoice.label,
     })
     this.props.dispatch(SetVoice(newVoice.value))
+  }
+
+  ChangeSpeed(rate) {
+    this.setState({ rate: rate })
+    this.props.dispatch(SetSpeed(rate))
+  }
+
+  ChangeTimeBetween(rate) {
+    this.setState({
+      time: rate.value
+    })
+    this.props.dispatch(SetTimeBetween(rate.value));
   }
   
 }
