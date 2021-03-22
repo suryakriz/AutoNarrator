@@ -6,19 +6,12 @@ import {Button, StatusBar, StyleSheet, View, Text, SafeAreaView, Image, Alert, T
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-//import { Geolocation } from 'react-native-geolocation-service';
 
 //import { HeaderTitle } from '@react-navigation/stack';
 import Title from "./assets/Title.png";
 
 const Tab = createBottomTabNavigator();
-//Geolocation.setRNConfiguration(config);
 navigator.geolocation = require('@react-native-community/geolocation');
-
-state = {
-  initialPosition: 'unknown'
-};
-
 
 
 //BOTTOM TAB STUFF
@@ -75,8 +68,6 @@ function App() {
       <View style= {styles.header}>
         <View style = {{height: "15%"}} />
         <Image source={require("./assets/Title.png")} style={styles.title}/>
-        
-        
       </View>
       <NavigationContainer>
 		  	<MyTabs />
