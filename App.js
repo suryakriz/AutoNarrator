@@ -2,18 +2,24 @@ import * as React from 'react';
 import HomeScreen from './Components/HomeScreen'
 import SettingsScreen from './Components/SettingsScreen'
 import LastDriveScreen from './Components/LastDriveScreen'
-import { StatusBar, StyleSheet, View, Text, SafeAreaView, Image, Alert} from 'react-native';
+import {Button, StatusBar, StyleSheet, View, Text, SafeAreaView, Image, Alert, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderTitle } from '@react-navigation/stack';
+//import { Geolocation } from 'react-native-geolocation-service';
+
+//import { HeaderTitle } from '@react-navigation/stack';
 import Title from "./assets/Title.png";
 
 const Tab = createBottomTabNavigator();
+//Geolocation.setRNConfiguration(config);
+navigator.geolocation = require('@react-native-community/geolocation');
 
 state = {
-  location: null
+  initialPosition: 'unknown'
 };
+
+
 
 //BOTTOM TAB STUFF
 function MyTabs() {
@@ -61,28 +67,16 @@ function MyTabs() {
   );
 }
 
-findCoordinates = () =>
-{
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const location = JSON.stringify(position);
 
-        this.setState({location});
-      },
-      error => Alert.alert(error.message),
-      { enableHighAccuracy : true, timeout: 20000, maximumAge: 1000}
-    );
-    
-};
 //ACTUALLY CALLING THE APP 
 function App() {
-  console.log(this.state.location);
   return (
     <View style= {{ width: "100%", height: "100%"}}>
       <View style= {styles.header}>
         <View style = {{height: "15%"}} />
         <Image source={require("./assets/Title.png")} style={styles.title}/>
-        <Text>Location: {this.state.location}</Text>
+        
+        
       </View>
       <NavigationContainer>
 		  	<MyTabs />
