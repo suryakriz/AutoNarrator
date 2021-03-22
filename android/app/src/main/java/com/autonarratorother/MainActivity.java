@@ -1,4 +1,4 @@
-package com.autonarratorother;
+package com.AutoNarrator;
 
 import android.os.Bundle;
 

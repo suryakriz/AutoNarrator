@@ -2,7 +2,7 @@ import * as React from 'react';
 import HomeScreen from './Components/HomeScreen'
 import SettingsScreen from './Components/SettingsScreen'
 import LastDriveScreen from './Components/LastDriveScreen'
-import {Button, StatusBar, StyleSheet, View, Text, SafeAreaView, Image, Alert, TouchableOpacity, PermissionsAndroid} from 'react-native';
+import {Button, StatusBar, StyleSheet, View, Text, Image, Alert, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';

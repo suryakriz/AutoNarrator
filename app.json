@@ -1,9 +1,9 @@
 {
-  "name": "autonarrator_other",
-  "displayName": "autonarrator_other",
+  "name": "AutoNarrator",
+  "displayName": "AutoNarrator",
   "expo": {
-    "name": "autonarrator_other",
-    "slug": "autonarrator_other",
+    "name": "AutoNarrator",
+    "slug": "AutoNarrator",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"

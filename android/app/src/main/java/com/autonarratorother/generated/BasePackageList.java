@@ -1,4 +1,4 @@
-package com.autonarratorother.generated;
+package com.AutoNarrator.generated;
 
 import java.util.Arrays;
 import java.util.List;

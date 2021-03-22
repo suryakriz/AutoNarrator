@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.autonarratorother"
+        applicationId "com.AutoNarrator"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
