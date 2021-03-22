@@ -9,7 +9,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
 import * as Speech from "expo-speech";
+
+let customFonts = {
+  'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
+};
 
 async function loadWebData() {
   //notVisited
@@ -73,31 +79,29 @@ class HomeScreen extends React.Component {
     };
   }
 
+  //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
+  }
+
+  //TEXT-TO-SPEECH
   speak() {
     if (this.state.index == 0) {
       var thingToSay = "Today, we will be testing voice:";
-
       Speech.speak(thingToSay);
-      /*ttsList()
-        .then((result) => {
-          console.log(result);
-          listSpeech = result;
-          console.log(listSpeech);
-          for (var i = 0; i < listSpeech.length; i++) {
-            //uncomment to start speaking sample text in all of the languages
-            //console.log(listSpeech[i]);
-            thingToSay = "Today, we will be testing voice: " + listSpeech[i];
-            Speech.speak(thingToSay, { voice: listSpeech[i] });
-          }
-        })
-        .catch((err) => {
-          console.log("error");
-        });*/
     } else {
       Speech.stop();
     }
   }
 
+  //SWITCHING BUTTONS
   OnButtonPress = () => {
     if (this.imageBool) {
       this.imageBool = false;
@@ -120,27 +124,31 @@ class HomeScreen extends React.Component {
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.HomeTextTop}>{this.state.topText}</Text>
+    if (this.state.fontsLoaded) {
+      return (
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.HomeTextTop}>{this.state.topText}</Text>
+          </View>
+          <View>
+            <Text style={styles.HomeTextBot}>{this.state.bottomText}</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                this.speak();
+                this.OnButtonPress();
+              }}
+              style={styles.buttonContainer}
+            >
+              <Image source={this.state.pic} style={styles.image} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View>
-          <Text style={styles.HomeTextBot}>{this.state.bottomText}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              this.speak();
-              this.OnButtonPress();
-            }}
-            style={styles.buttonContainer}
-          >
-            <Image source={this.state.pic} style={styles.image} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
+      );
+    } else {
+      return <AppLoading />;
+    }
   }
 }
 
@@ -166,11 +174,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     paddingBottom: "10%",
     paddingTop: "10%",
+    paddingLeft: "10%",
+    paddingRight: "10%",
     textAlign: "center",
+    fontFamily: 'Quicksand-Regular'
   },
   HomeTextBot: {
     fontSize: 24,
     textAlign: "center",
+    fontFamily: 'Quicksand-Regular'
   },
 });
 
