@@ -17,36 +17,7 @@ let customFonts = {
   'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
 };
 
-async function loadWebData() {
-  //notVisited
-  var notVisited = true;
-  //put together the longitude and latitude of a current location
-  var longitude = "-96.334643";
-  var latitude = "30.592205";
-  //pull the list of locations from the longitude and latitiude
-  const cheerio = require("cheerio");
-  const searchUrl =
-    "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
-    latitude +
-    "&Longitude=" +
-    longitude +
-    "&submit=Show+List";
-  var response = await fetch(searchUrl);
-  var htmlString = await response.text();
-  const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-  for (var i = 0; i < listOfLocations.length; i++) {
-    console.log(listOfLocations.eq(i).text()); // logs individual sections
-    if (notVisited) {
-      const locationUrl =
-        "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
-      response = await fetch(locationUrl);
-      htmlString = await response.text();
-      //INFORMATION TO BE READ BY THE READER
-      var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-      return landmarkInfo;
-    }
-  }
-}
+
 
 async function ttsList() {
   try {
@@ -91,7 +62,44 @@ class HomeScreen extends React.Component {
     this._loadFontsAsync();
   }
 
-  //TEXT-TO-SPEECH
+  async loadWebData() {
+    if (this.state.index == 0) {
+      //notVisited
+      var notVisited = true;
+      //put together the longitude and latitude of a current location
+      var longitude = "-96.334643";
+      var latitude = "30.592205";
+      //pull the list of locations from the longitude and latitiude
+      const cheerio = require("cheerio");
+      const searchUrl =
+        "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+        latitude +
+        "&Longitude=" +
+        longitude +
+        "&submit=Show+List";
+      var response = await fetch(searchUrl);
+      var htmlString = await response.text();
+      const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+      for (var i = 0; i < listOfLocations.length; i++) {
+        console.log(listOfLocations.eq(i).text()); // logs individual sections
+        if (notVisited) {
+          var location = listOfLocations.eq(i)
+          var locationUrl =
+            "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
+          response = await fetch(locationUrl);
+          htmlString = await response.text();
+          //INFORMATION TO BE READ BY THE READER
+          var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
+          Speech.speak(landmarkInfo);
+          return landmarkInfo;
+        }
+      }
+    } else {
+      Speech.stop();
+    } 
+  }
+
+  /*//TEXT-TO-SPEECH
   speak() {
     if (this.state.index == 0) {
       var thingToSay = "Today, we will be testing voice:";
@@ -99,7 +107,7 @@ class HomeScreen extends React.Component {
     } else {
       Speech.stop();
     }
-  }
+  }*/
 
   //SWITCHING BUTTONS
   OnButtonPress = () => {
@@ -136,7 +144,7 @@ class HomeScreen extends React.Component {
           <View>
             <TouchableOpacity
               onPress={() => {
-                this.speak();
+                this.loadWebData();
                 this.OnButtonPress();
               }}
               style={styles.buttonContainer}
