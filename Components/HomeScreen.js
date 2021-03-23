@@ -1,17 +1,14 @@
 import * as React from "react";
-import {
-  Image,
-  View,
-  StyleSheet,
-  Button,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-
+import { Image, View, StyleSheet, Button, FlatList, Text, TouchableOpacity } from "react-native";
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
+import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from '../Redux/VisitedSlice'
-import * as Speech from "expo-speech";
+
+let customFonts = {
+  'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
+};
 
 async function ttsList() {
   try {
@@ -44,63 +41,57 @@ class HomeScreen extends React.Component {
     };
   }
 
-  async loadWebData() {
-	//notVisited
-	var notVisited = true;
-	//put together the longitude and latitude of a current location
-	var longitude = "-96.334643";
-	var latitude = "30.592205";
-	//pull the list of locations from the longitude and latitiude
-	const cheerio = require("cheerio");
-	const searchUrl =
-	  "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
-	  latitude +
-	  "&Longitude=" +
-	  longitude +
-	  "&submit=Show+List";
-	var response = await fetch(searchUrl);
-	var htmlString = await response.text();
-	const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-	for (var i = 0; i < listOfLocations.length; i++) {
-	  console.log(listOfLocations.eq(i).text()); // logs individual sections
-	  if (notVisited) {
-		const locationUrl =
-		  "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
-		response = await fetch(locationUrl);
-		htmlString = await response.text();
-		//INFORMATION TO BE READ BY THE READER
-		var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-		this.props.dispatch(VisitedListAdd(landmarkInfo));
-		return landmarkInfo;
-	  }
-	}
+  //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
   }
 
-  speak() {
+  async loadWebData() {
     if (this.state.index == 0) {
-      var thingToSay = "Today, we will be testing voice:";
-      Speech.speak(thingToSay, { voice: this.props.voice, rate: this.props.speed });
-      /*ttsList()
-        .then((result) => {
-          console.log(result);
-          listSpeech = result;
-          console.log(listSpeech);
-          for (var i = 0; i < listSpeech.length; i++) {
-            //uncomment to start speaking sample text in all of the languages
-            //console.log(listSpeech[i]);
-            thingToSay = "Today, we will be testing voice: " + listSpeech[i];
-            Speech.speak(thingToSay, { voice: listSpeech[i] });
-          }
-        })
-        .catch((err) => {
-          console.log("error");
-        });*/
-		this.loadWebData();
+      //notVisited
+      var notVisited = true;
+      //put together the longitude and latitude of a current location
+      var longitude = "-96.334643";
+      var latitude = "30.592205";
+      //pull the list of locations from the longitude and latitiude
+      const cheerio = require("cheerio");
+      const searchUrl =
+        "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+        latitude +
+        "&Longitude=" +
+        longitude +
+        "&submit=Show+List";
+      var response = await fetch(searchUrl);
+      var htmlString = await response.text();
+      const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+      for (var i = 0; i < listOfLocations.length; i++) {
+        console.log(listOfLocations.eq(i).text()); // logs individual sections
+        if (notVisited) {
+          var location = listOfLocations.eq(i)
+          var locationUrl =
+            "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
+          response = await fetch(locationUrl);
+          htmlString = await response.text();
+          //INFORMATION TO BE READ BY THE READER
+          var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
+          this.props.dispatch(VisitedListAdd(landmarkInfo));
+          Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
+          return landmarkInfo;
+        }
+      }
     } else {
       Speech.stop();
-    }
+    } 
   }
 
+  //SWITCHING BUTTONS
   OnButtonPress = () => {
     if (this.imageBool) {
       this.imageBool = false;
@@ -123,27 +114,31 @@ class HomeScreen extends React.Component {
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.HomeTextTop}>{this.state.topText}</Text>
+    if (this.state.fontsLoaded) {
+      return (
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.HomeTextTop}>{this.state.topText}</Text>
+          </View>
+          <View>
+            <Text style={styles.HomeTextBot}>{this.state.bottomText}</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                this.loadWebData();
+                this.OnButtonPress();
+              }}
+              style={styles.buttonContainer}
+            >
+              <Image source={this.state.pic} style={styles.image} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View>
-          <Text style={styles.HomeTextBot}>{this.state.bottomText}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              this.speak();
-              this.OnButtonPress();
-            }}
-            style={styles.buttonContainer}
-          >
-            <Image source={this.state.pic} style={styles.image} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
+      );
+    } else {
+      return <AppLoading />;
+    }
   }
 }
 
@@ -179,11 +174,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     paddingBottom: "10%",
     paddingTop: "10%",
+    paddingLeft: "10%",
+    paddingRight: "10%",
     textAlign: "center",
+    fontFamily: 'Quicksand-Regular'
   },
   HomeTextBot: {
     fontSize: 24,
     textAlign: "center",
+    fontFamily: 'Quicksand-Regular'
   },
 });
 
