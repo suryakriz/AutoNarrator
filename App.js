@@ -2,10 +2,12 @@ import * as React from "react";
 import HomeScreen from "./Components/HomeScreen";
 import SettingsScreen from "./Components/SettingsScreen";
 import LastDriveScreen from "./Components/LastDriveScreen";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native"; 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import store from './Redux/Store'
+import { Provider } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
@@ -58,15 +60,18 @@ function MyTabs() {
 //ACTUALLY CALLING THE APP
 function App() {
   return (
-    <View style={{ width: "100%", height: "100%" }}>
-      <View style={styles.header}>
-        <View style={{ height: "15%" }} />
-        <Image source={require("./assets/Title.png")} style={styles.title} />
+    <Provider store={store}>
+      <View style={{ width: "100%", height: "100%" }}>
+        <View style={styles.header}>
+          <View style={{ height: "15%" }} />
+          <Image source={require("./assets/Title.png")} style={styles.title} />
+        </View>
+        <NavigationContainer>
+          <MyTabs />
+        </NavigationContainer>
       </View>
-      <NavigationContainer>
-        <MyTabs />
-      </NavigationContainer>
-    </View>
+    </Provider>
+    
   );
 }
 

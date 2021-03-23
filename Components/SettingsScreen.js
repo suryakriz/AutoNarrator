@@ -3,6 +3,8 @@ import { Button, StyleSheet, View, Text, Alert } from "react-native";
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
+import { SetVoice, SetSpeed, SetTimeBetween } from '../Redux/SettingsSlice'
+import { useDispatch } from 'react-redux'
 import Icon from 'react-native-ico-flags';
 import Icon2 from 'react-native-ico-ui-interface';
 import Icon3 from 'react-native-ico-essential';
@@ -13,7 +15,7 @@ function DropdownItem(label) {
   this.label = label;
 }
 
-export default class SettingsScreen extends Component {
+class SettingsScreen extends Component {
   constructor() {
     super();
     var voiceList = [
@@ -107,6 +109,8 @@ export default class SettingsScreen extends Component {
       tList: timeList,
       time: 300,
     };
+
+    this.ChangeVoice = this.ChangeVoice.bind(this)
   }
 
   async speaktest(){
@@ -147,10 +151,7 @@ export default class SettingsScreen extends Component {
             }}
             dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
             onChangeItem={(item) =>
-              this.setState({
-                voice: item.value,
-                label: item.label,
-              })
+              this.ChangeVoice(item)
             }
           />
         </View>
@@ -161,7 +162,7 @@ export default class SettingsScreen extends Component {
           <Slider
             step={0.5}
             style={styles.slider}
-            onValueChange={(rate) => this.setState({ rate: rate })}
+            onValueChange={(rate) => this.ChangeSpeed(rate)}
             minimumValue={0.5}
             maximumValue={3.5}
             value={this.state.rate}
@@ -196,9 +197,7 @@ export default class SettingsScreen extends Component {
             }}
             dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
             onChangeItem={(item) =>
-              this.setState({
-                time: item.value
-              })
+              this.ChangeTimeBetween(item)
             }
           />
         </View>
@@ -218,6 +217,34 @@ export default class SettingsScreen extends Component {
       </View>
     );
   }
+
+  ChangeVoice(newVoice) {
+    this.setState({
+      voice: newVoice.value,
+      label: newVoice.label,
+    })
+    this.props.dispatch(SetVoice(newVoice.value))
+  }
+
+  ChangeSpeed(rate) {
+    this.setState({ rate: rate })
+    this.props.dispatch(SetSpeed(rate))
+  }
+
+  ChangeTimeBetween(rate) {
+    this.setState({
+      time: rate.value
+    })
+    this.props.dispatch(SetTimeBetween(rate.value));
+  }
+  
+}
+
+export default () => {
+	const dispatch = useDispatch();
+	return (
+		<SettingsScreen dispatch={dispatch}/>
+	)
 }
 
 const styles = StyleSheet.create({

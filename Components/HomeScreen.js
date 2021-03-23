@@ -8,16 +8,15 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import * as Speech from "expo-speech";
+import { connect, useDispatch } from "react-redux";
+import { VisitedListAdd } from '../Redux/VisitedSlice'
 
 let customFonts = {
   'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
 };
-
-
 
 async function ttsList() {
   try {
@@ -90,7 +89,8 @@ class HomeScreen extends React.Component {
           htmlString = await response.text();
           //INFORMATION TO BE READ BY THE READER
           var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-          Speech.speak(landmarkInfo);
+          this.props.dispatch(VisitedListAdd(landmarkInfo));
+          Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
           return landmarkInfo;
         }
       }
@@ -103,11 +103,48 @@ class HomeScreen extends React.Component {
   speak() {
     if (this.state.index == 0) {
       var thingToSay = "Today, we will be testing voice:";
-      Speech.speak(thingToSay);
+      Speech.speak(thingToSay, { voice: this.props.voice, rate: this.props.speed });
+		  this.loadWebData();
     } else {
       Speech.stop();
     }
-  }*/
+  
+  */
+
+  /*
+  //JACK'S EDITED LOADWEBDATA
+  async loadWebData() {
+	//notVisited
+	var notVisited = true;
+	//put together the longitude and latitude of a current location
+	var longitude = "-96.334643";
+	var latitude = "30.592205";
+	//pull the list of locations from the longitude and latitiude
+	const cheerio = require("cheerio");
+	const searchUrl =
+	  "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+	  latitude +
+	  "&Longitude=" +
+	  longitude +
+	  "&submit=Show+List";
+	var response = await fetch(searchUrl);
+	var htmlString = await response.text();
+	const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+	for (var i = 0; i < listOfLocations.length; i++) {
+	  console.log(listOfLocations.eq(i).text()); // logs individual sections
+	  if (notVisited) {
+		const locationUrl =
+		  "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
+		response = await fetch(locationUrl);
+		htmlString = await response.text();
+		//INFORMATION TO BE READ BY THE READER
+		var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
+		this.props.dispatch(VisitedListAdd(landmarkInfo));
+		return landmarkInfo;
+	  }
+	}
+  } */
+
 
   //SWITCHING BUTTONS
   OnButtonPress = () => {
@@ -160,6 +197,16 @@ class HomeScreen extends React.Component {
   }
 }
 
+function mapStateToProps(state) {
+	return {
+	  voice: state.settings.voiceName,
+	  speed: state.settings.talkSpeed,
+	  timeBetween: state.settings.timeBetween
+	}
+}
+  
+export default connect(mapStateToProps)(HomeScreen)
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -194,4 +241,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+function Home() {
+	const dispatch = useDispatch();
+	return (
+		<HomeScreen dispatch={dispatch}/>
+	)
+}
