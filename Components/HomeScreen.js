@@ -1,15 +1,23 @@
 import * as React from "react";
-import { Image, View, StyleSheet, Button, FlatList, Text, TouchableOpacity } from "react-native";
-import AppLoading from 'expo-app-loading';
-import * as Font from 'expo-font';
+import {
+  Image,
+  View,
+  StyleSheet,
+  Button,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
-import { VisitedListAdd } from '../Redux/VisitedSlice'
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
+import { VisitedListAdd } from "../Redux/VisitedSlice";
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
 
 let customFonts = {
-  'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
 };
 
 async function ttsList() {
@@ -41,25 +49,31 @@ class HomeScreen extends React.Component {
       topText: "Start Your Drive To Begin Learning About Your Local History",
       bottomText: "Press Here To Start Drive",
       location: null,
-      lat : null,
-      long : null,
-      errormsg: ""
+      lat: null,
+      long: null,
+      errormsg: "",
     };
   }
 
   getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
+    if (status !== "granted") {
       this.setState({
-        errorMessage: 'Permission to access location was denied',
+        errorMessage: "Permission to access location was denied",
       });
     }
 
-    let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Highest});
-    const { latitude , longitude } = location.coords
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+    const { latitude, longitude } = location.coords;
     console.log(location);
     //this.getGeocodeAsync({latitude, longitude})
-    this.setState({ location: {latitude, longitude}, lat : latitude, long: longitude});
+    this.setState({
+      location: { latitude, longitude },
+      lat: latitude,
+      long: longitude,
+    });
   };
   //FONT STUFF
   state = {
@@ -79,8 +93,12 @@ class HomeScreen extends React.Component {
       var notVisited = true;
       //put together the longitude and latitude of a current location
       this.getLocationAsync();
-      var longitude = this.state.long;
-      var latitude = this.state.lat;
+      //var longitude = this.state.long;
+      //var latitude = this.state.lat;
+
+      var longitude = -96;
+      var latitude = 30;
+
       //pull the list of locations from the longitude and latitiude
       const cheerio = require("cheerio");
       const searchUrl =
@@ -95,7 +113,7 @@ class HomeScreen extends React.Component {
       for (var i = 0; i < listOfLocations.length; i++) {
         console.log(listOfLocations.eq(i).text()); // logs individual sections
         if (notVisited) {
-          var location = listOfLocations.eq(i)
+          var location = listOfLocations.eq(i);
           var locationUrl =
             "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
           response = await fetch(locationUrl);
@@ -103,13 +121,19 @@ class HomeScreen extends React.Component {
           //INFORMATION TO BE READ BY THE READER
           var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
           this.props.dispatch(VisitedListAdd(landmarkInfo));
-          Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
-          return landmarkInfo;
+          Speech.speak(landmarkInfo, {
+            voice: this.props.voice,
+            rate: this.props.speed,
+          });
+          let promise = Speech.isSpeakingAsync();
+          let result = await promise;
+          console.log("Hi");
+          //return landmarkInfo;
         }
       }
     } else {
       Speech.stop();
-    } 
+    }
   }
 
   //SWITCHING BUTTONS
@@ -164,14 +188,14 @@ class HomeScreen extends React.Component {
 }
 
 function mapStateToProps(state) {
-	return {
-	  voice: state.settings.voiceName,
-	  speed: state.settings.talkSpeed,
-	  timeBetween: state.settings.timeBetween
-	}
+  return {
+    voice: state.settings.voiceName,
+    speed: state.settings.talkSpeed,
+    timeBetween: state.settings.timeBetween,
+  };
 }
-  
-export default connect(mapStateToProps)(HomeScreen)
+
+export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -198,18 +222,16 @@ const styles = StyleSheet.create({
     paddingLeft: "10%",
     paddingRight: "10%",
     textAlign: "center",
-    fontFamily: 'Quicksand-Regular'
+    fontFamily: "Quicksand-Regular",
   },
   HomeTextBot: {
     fontSize: 24,
     textAlign: "center",
-    fontFamily: 'Quicksand-Regular'
+    fontFamily: "Quicksand-Regular",
   },
 });
 
 function Home() {
-	const dispatch = useDispatch();
-	return (
-		<HomeScreen dispatch={dispatch}/>
-	)
+  const dispatch = useDispatch();
+  return <HomeScreen dispatch={dispatch} />;
 }
