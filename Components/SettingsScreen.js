@@ -99,7 +99,6 @@ class SettingsScreen extends Component {
         value: 3600
       },
     ];
-
     this.state = {
       rate: this.props.rate,
       pitch: 1.0,
@@ -107,7 +106,7 @@ class SettingsScreen extends Component {
       voice: this.props.voice,
       vList: voiceList,
       tList: timeList,
-      time: this.props.timeBetween,
+      time: this.props.time,
     };
 
     this.ChangeVoice = this.ChangeVoice.bind(this)

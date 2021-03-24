@@ -93,16 +93,16 @@ class HomeScreen extends React.Component {
       var htmlString = await response.text();
       const listOfLocations = cheerio.load(htmlString)("a:even", "li");
       for (var i = 0; i < listOfLocations.length; i++) {
-        console.log(listOfLocations.eq(i).text()); // logs individual sections
-        if (notVisited) {
-          var location = listOfLocations.eq(i)
+        //console.log(listOfLocations.eq(i).text()); // logs individual sections
+        if (!this.props.visited.includes(location)) {
+          console.log(listOfLocations.eq(i).text());
           var locationUrl =
             "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
           response = await fetch(locationUrl);
           htmlString = await response.text();
           //INFORMATION TO BE READ BY THE READER
           var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-          this.props.dispatch(VisitedListAdd(landmarkInfo));
+          this.props.dispatch(VisitedListAdd(location));
           Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
           return landmarkInfo;
         }
@@ -167,7 +167,8 @@ function mapStateToProps(state) {
 	return {
 	  voice: state.settings.voiceName,
 	  speed: state.settings.talkSpeed,
-	  timeBetween: state.settings.timeBetween
+	  timeBetween: state.settings.timeBetween,
+	  visited: state.visited,
 	}
 }
   
