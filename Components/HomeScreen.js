@@ -5,6 +5,8 @@ import * as Font from 'expo-font';
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from '../Redux/VisitedSlice'
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 
 let customFonts = {
   'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
@@ -38,9 +40,27 @@ class HomeScreen extends React.Component {
       index: 0,
       topText: "Start Your Drive To Begin Learning About Your Local History",
       bottomText: "Press Here To Start Drive",
+      location: null,
+      lat : null,
+      long : null,
+      errormsg: ""
     };
   }
 
+  getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Highest});
+    const { latitude , longitude } = location.coords
+    console.log(location);
+    //this.getGeocodeAsync({latitude, longitude})
+    this.setState({ location: {latitude, longitude}, lat : latitude, long: longitude});
+  };
   //FONT STUFF
   state = {
     fontsLoaded: false,
@@ -58,8 +78,9 @@ class HomeScreen extends React.Component {
       //notVisited
       var notVisited = true;
       //put together the longitude and latitude of a current location
-      var longitude = "-96.334643";
-      var latitude = "30.592205";
+      this.getLocationAsync();
+      var longitude = this.state.long;
+      var latitude = this.state.lat;
       //pull the list of locations from the longitude and latitiude
       const cheerio = require("cheerio");
       const searchUrl =
