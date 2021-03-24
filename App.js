@@ -6,13 +6,14 @@ import {Button, StatusBar, StyleSheet, View, Text, Image, Alert, TouchableOpacit
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import store from './Redux/Store'
+import { Provider } from 'react-redux';
+import Title from "./assets/Title.png";
 
 //import { HeaderTitle } from '@react-navigation/stack';
-import Title from "./assets/Title.png";
 
 const Tab = createBottomTabNavigator();
 navigator.geolocation = require('@react-native-community/geolocation');
-
 
 //BOTTOM TAB STUFF
 function MyTabs() {
@@ -20,17 +21,17 @@ function MyTabs() {
     <Tab.Navigator
       initialRouteName="Home"
       tabBarOptions={{
-        activeTintColor: '#ffffff',
-        inactiveTintColor: '#ffffff',
-        activeBackgroundColor: '#214988',
-        inactiveBackgroundColor: '#529bcc',
+        activeTintColor: "#ffffff",
+        inactiveTintColor: "#ffffff",
+        activeBackgroundColor: "#214988",
+        inactiveBackgroundColor: "#529bcc",
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-home-outline" color={color} size={size} />
           ),
@@ -40,7 +41,7 @@ function MyTabs() {
         name="Past Trips"
         component={LastDriveScreen}
         options={{
-          tabBarLabel: 'Past Trips',
+          tabBarLabel: "Past Trips",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-time-outline" color={color} size={size} />
           ),
@@ -50,7 +51,7 @@ function MyTabs() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarLabel: 'Settings',
+          tabBarLabel: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-settings-outline" color={color} size={size} />
           ),
@@ -60,34 +61,36 @@ function MyTabs() {
   );
 }
 
-
-//ACTUALLY CALLING THE APP 
+//ACTUALLY CALLING THE APP
 function App() {
   return (
-    <View style= {{ width: "100%", height: "100%"}}>
-      <View style= {styles.header}>
-        <View style = {{height: "15%"}} />
-        <Image source={require("./assets/Title.png")} style={styles.title}/>
+    <Provider store={store}>
+      <View style={{ width: "100%", height: "100%" }}>
+        <View style={styles.header}>
+          <View style={{ height: "15%" }} />
+          <Image source={require("./assets/Title.png")} style={styles.title} />
+        </View>
+        <NavigationContainer>
+          <MyTabs />
+        </NavigationContainer>
       </View>
-      <NavigationContainer>
-		  	<MyTabs />
-		  </NavigationContainer>
-    </View>
+    </Provider>
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  header:{
-    alignItems: 'center',  
-    width: "100%", 
-    height: "15%", 
-    backgroundColor: '#529bcc',
+  header: {
+    alignItems: "center",
+    width: "100%",
+    height: "15%",
+    backgroundColor: "#529bcc",
   },
   title: {
     resizeMode: "contain",
