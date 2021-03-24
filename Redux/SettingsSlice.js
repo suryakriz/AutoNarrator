@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     talkSpeed: 1,
-    voiceName: 'en-us-x-sfg#female_3-local',
+    voiceName: "en-au-x-auc-network",
+    voiceLabel: "AUS - Female",
     timeBetween: 30
 }
 
@@ -11,7 +12,8 @@ const SettingsSlice = createSlice({
     initialState,
     reducers: {
         SetVoice(state, action) {
-            state.voiceName = action.payload
+            state.voiceName = action.payload.voice
+            state.voiceLabel = action.payload.label
         },
         SetSpeed(state, action) {
             state.talkSpeed = action.payload

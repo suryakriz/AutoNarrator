@@ -4,7 +4,7 @@ import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
 import { SetVoice, SetSpeed, SetTimeBetween } from '../Redux/SettingsSlice'
-import { useDispatch } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import Icon from 'react-native-ico-flags';
 import Icon2 from 'react-native-ico-ui-interface';
 import Icon3 from 'react-native-ico-essential';
@@ -16,8 +16,8 @@ function DropdownItem(label) {
 }
 
 class SettingsScreen extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     var voiceList = [
       {
         label: "US - Male",
@@ -101,13 +101,13 @@ class SettingsScreen extends Component {
     ];
 
     this.state = {
-      rate: 1.0,
+      rate: this.props.rate,
       pitch: 1.0,
-      label: "US - Female",
-      voice: "en-us-x-sfg#female_3-local",
+      label: this.props.label,
+      voice: this.props.voice,
       vList: voiceList,
       tList: timeList,
-      time: 300,
+      time: this.props.timeBetween,
     };
 
     this.ChangeVoice = this.ChangeVoice.bind(this)
@@ -223,7 +223,7 @@ class SettingsScreen extends Component {
       voice: newVoice.value,
       label: newVoice.label,
     })
-    this.props.dispatch(SetVoice(newVoice.value))
+    this.props.dispatch(SetVoice({voice: newVoice.value, label: newVoice.label}))
   }
 
   ChangeSpeed(rate) {
@@ -240,12 +240,16 @@ class SettingsScreen extends Component {
   
 }
 
-export default () => {
-	const dispatch = useDispatch();
-	return (
-		<SettingsScreen dispatch={dispatch}/>
-	)
+function mapStateToProps(state) {
+	return {
+	  voice: state.settings.voiceName,
+	  rate: state.settings.talkSpeed,
+	  time: state.settings.timeBetween,
+    label: state.settings.voiceLabel,
+	}
 }
+  
+export default connect(mapStateToProps)(SettingsScreen)
 
 const styles = StyleSheet.create({
   container: {
