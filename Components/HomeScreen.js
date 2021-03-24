@@ -186,10 +186,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-function Home() {
-	const dispatch = useDispatch();
-	return (
-		<HomeScreen dispatch={dispatch}/>
-	)
-}
