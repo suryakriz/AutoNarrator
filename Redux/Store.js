@@ -1,15 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { VisitedListAdd } from './VisitedSlice'
 import VisitedReducer from './VisitedSlice'
 import SettingsReducer from './SettingsSlice'
+import PastTripsReducer from './PastTripsSlice'
 
 const store = configureStore({ 
     reducer: {
         visited: VisitedReducer,
-        settings: SettingsReducer
+        settings: SettingsReducer,
+        pastTrips: PastTripsReducer
     }
 })
-
-//console.log(VisitedListAdd)
 
 export default store
