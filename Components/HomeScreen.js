@@ -57,15 +57,11 @@ class HomeScreen extends React.Component {
     const { latitude, longitude } = location.coords;
     console.log(location);
     //this.getGeocodeAsync({latitude, longitude})
-<<<<<<< HEAD
     this.setState({
       location: { latitude, longitude },
       lat: latitude,
       long: longitude,
     });
-=======
-    this.setState({ location: {latitude, longitude}, lat : latitude, long: longitude});
->>>>>>> origin/master
     return true;
   };
   //FONT STUFF
@@ -80,7 +76,6 @@ class HomeScreen extends React.Component {
     this._loadFontsAsync();
   }
 
-<<<<<<< HEAD
   async loadData() {
     console.log("Running Load Data");
     if (this.state.index == 1) {
@@ -152,45 +147,7 @@ class HomeScreen extends React.Component {
             console.log("Currently Speaking");
             return;
           }
-=======
-  async loadWebData() {
-    if (this.state.index == 0) {
-      //notVisited
-      var notVisited = true;
-      //put together the longitude and latitude of a current location
-      var have_location = await this.getLocationAsync();
-      console.log(this.state.long);
-      var longitude = this.state.long;
-      var latitude =  this.state.lat;
-      //pull the list of locations from the longitude and latitiude
-      if(have_location){
-      const cheerio = require("cheerio");
-      const searchUrl =
-        "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
-        latitude +
-        "&Longitude=" +
-        longitude +
-        "&submit=Show+List";
-      console.log(searchUrl);
-      var response = await fetch(searchUrl);
-      var htmlString = await response.text();
-      const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-      for (var i = 0; i < listOfLocations.length; i++) {
-        console.log(listOfLocations.eq(i).text()); // logs individual sections
-        if (notVisited) {
-          var location = listOfLocations.eq(i)
-          var locationUrl =
-            "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
-          response = await fetch(locationUrl);
-          htmlString = await response.text();
-          //INFORMATION TO BE READ BY THE READER
-          var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-          this.props.dispatch(VisitedListAdd(landmarkInfo));
-          Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
-          return landmarkInfo;
->>>>>>> origin/master
         }
-      }
       }
     } else {
       console.log("Stop Speaking");
@@ -199,8 +156,6 @@ class HomeScreen extends React.Component {
       return;
     }
   }
-
-  loadWebDataOnInterval() {}
 
   //SWITCHING BUTTONS
   OnButtonPress = () => {
@@ -228,10 +183,6 @@ class HomeScreen extends React.Component {
       this.state.intervalFunc = setInterval(() => {
         console.log("interval");
         if (this.state.index == 0) {
-          /*this.state.intervalSet = false;
-          console.log("clearInterval");
-          clearInterval(this.state.intervalFunc);
-          this.state.intervalFunc = null;*/
           console.log("Exiting Interval");
           return;
         } else {
