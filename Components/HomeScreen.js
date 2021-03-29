@@ -15,6 +15,7 @@ import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from "../Redux/VisitedSlice";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
+import * as SMS from 'expo-sms';
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -42,6 +43,17 @@ class HomeScreen extends React.Component {
     };
   }
 
+  async sendSMSMsg(recips,msg)
+  {
+    const isAvailable = await SMS.isAvailableAsync();
+    if(isAvailable)
+    {
+      SMS.sendSMSAsync(recips,msg);
+    }
+    else{
+      alert("sending SMS msg failed");
+    }
+  }
   getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
@@ -92,7 +104,6 @@ class HomeScreen extends React.Component {
       var latitude = this.state.lat;
       //var longitude = -96;
       //var latitude = 30;
-
       if (have_location) {
         const cheerio = require("cheerio");
         const searchUrl =
@@ -196,6 +207,14 @@ class HomeScreen extends React.Component {
       this.state.intervalFunc = null;
       console.log("Should be clearing speak");
       Speech.stop();
+
+      var msgToSend = "Howdy! Here is a list of places I visited using the Auto Narrator app: \n";
+      for(var i = 0; i < this.state.locationList.length; i ++)
+      {
+        msgToSend += this.state.locationList[i] + " \n";
+      }
+      console.log(msgToSend);
+      
       this.setState({ inProgress: false });
     }
   };
