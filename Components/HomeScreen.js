@@ -53,6 +53,7 @@ class HomeScreen extends React.Component {
       this.setState({
         errorMessage: 'Permission to access location was denied',
       });
+      return false;
     }
 
     let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Highest});
@@ -60,6 +61,7 @@ class HomeScreen extends React.Component {
     console.log(location);
     //this.getGeocodeAsync({latitude, longitude})
     this.setState({ location: {latitude, longitude}, lat : latitude, long: longitude});
+    return true;
   };
   //FONT STUFF
   state = {
@@ -78,10 +80,12 @@ class HomeScreen extends React.Component {
       //notVisited
       var notVisited = true;
       //put together the longitude and latitude of a current location
-      this.getLocationAsync();
+      var have_location = await this.getLocationAsync();
+      console.log(this.state.long);
       var longitude = this.state.long;
-      var latitude = this.state.lat;
+      var latitude =  this.state.lat;
       //pull the list of locations from the longitude and latitiude
+      if(have_location){
       const cheerio = require("cheerio");
       const searchUrl =
         "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
@@ -89,6 +93,7 @@ class HomeScreen extends React.Component {
         "&Longitude=" +
         longitude +
         "&submit=Show+List";
+      console.log(searchUrl);
       var response = await fetch(searchUrl);
       var htmlString = await response.text();
       const listOfLocations = cheerio.load(htmlString)("a:even", "li");
@@ -106,6 +111,7 @@ class HomeScreen extends React.Component {
           Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
           return landmarkInfo;
         }
+      }
       }
     } else {
       Speech.stop();
