@@ -13,6 +13,7 @@ import * as Font from "expo-font";
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from "../Redux/VisitedSlice";
+import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as SMS from 'expo-sms';
@@ -39,7 +40,7 @@ class HomeScreen extends React.Component {
       inProgress: false,
       intervalFunc: null,
       intervalSet: false,
-      locationList: [],
+      locationList: props.visited,
     };
   }
 
@@ -121,18 +122,15 @@ class HomeScreen extends React.Component {
           if (!this.state.inProgress) {
             console.log("Not Speaking");
             var location = listOfLocations.eq(count);
+            var locationName = location.text();
             var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
 
-            if (
-              this.state.locationList.includes(location.attr("href")) == false
-            ) {
+            if (this.state.locationList.includes(locationName) == false) {
               console.log("Not Visited Location");
               response = await fetch(locationUrl);
               htmlString = await response.text();
               this.setState((state) => {
-                const locationList = state.locationList.concat(
-                  location.attr("href")
-                );
+                const locationList = state.locationList.concat(locationName);
 
                 return {
                   locationList,
@@ -142,7 +140,7 @@ class HomeScreen extends React.Component {
               var landmarkInfo = cheerio
                 .load(htmlString)("#inscription1")
                 .text();
-              this.props.dispatch(VisitedListAdd(landmarkInfo));
+              this.props.dispatch(VisitedListAdd(locationName));
               Speech.speak(landmarkInfo, {
                 voice: this.props.voice,
                 rate: this.props.speed,
@@ -189,17 +187,17 @@ class HomeScreen extends React.Component {
       });
     }
     if (this.state.intervalSet == false) {
-      console.log("Interval func not set therefor setting");
+      console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
-        console.log("interval");
+        console.log("interval: ", this.props.timeBetween);
         if (this.state.index == 0) {
           console.log("Exiting Interval");
           return;
         } else {
           this.loadData();
         }
-      }, 10000);
+      }, this.props.timeBetween);
     } else {
       this.state.intervalSet = false;
       console.log("clearInterval");
@@ -252,6 +250,7 @@ function mapStateToProps(state) {
     voice: state.settings.voiceName,
     speed: state.settings.talkSpeed,
     timeBetween: state.settings.timeBetween,
+    visited: state.visited,
   };
 }
 
@@ -290,8 +289,3 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Regular",
   },
 });
-
-function Home() {
-  const dispatch = useDispatch();
-  return <HomeScreen dispatch={dispatch} />;
-}
