@@ -6,7 +6,8 @@ import {
   Button,
   FlatList,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  SectionList
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -15,89 +16,78 @@ function LastDriveScreen({ navigation }) {
   const DATA = [
     {
       tripdate: "01/04/2021",
-      triplength: "1 hour",
-      numlandmarks: "3 landmarks",
-      id: "1"
+      triplength: "\n1 hour",
+      numlandmarks: "\n2 landmarks",
+      data: [
+        [
+          "Alamo",
+          "\n\nThe Alamo Mission, commonly called the Alamo and " +
+            "originally known as the Misión San Antonio de Valero, " +
+            "is a historic Spanish mission and fortress compound founded " +
+            "in the 18th century by Roman Catholic missionaries in what is " +
+            "now San Antonio, Texas, United States."
+        ],
+        [
+          "White House",
+          "\n\nThe White House is the official residence and workplace of the president of the United States."
+        ]
+      ]
     },
     {
       tripdate: "01/31/2021",
-      triplength: "2 hours",
-      numlandmarks: "4 landmarks",
-      id: "2"
-    },
-    {
-      tripdate: "02/12/2021",
-      triplength: "5 hours",
-      numlandmarks: "16 landmarks",
-      id: "3"
-    },
-    {
-      tripdate: "02/22/2021",
-      triplength: "10 minutes",
-      numlandmarks: "1 landmark",
-      id: "4"
-    },
-    {
-      tripdate: "03/04/2021",
-      triplength: "45 minutes",
-      numlandmarks: "4 landmarks",
-      id: "5"
-    },
-    {
-      tripdate: "03/23/2021",
-      triplength: "30 minutes",
-      numlandmarks: "2 landmarks",
-      id: "6"
+      triplength: "\n10 minutes",
+      numlandmarks: "\n1 landmarks",
+      data: [
+        [
+          "MSC",
+          "\n\nIn front of the MSC, there are 55 trees that surround Simpson Drill Field to honor the 55 Aggies that gave their lives in World War I."
+        ]
+      ]
     }
   ];
 
-  const Item = ({ tripdate, triplength, numlandmarks }) => (
+  const Item = ({ landinfo }) => (
     <View style={styles.item}>
-      <Text style={styles.tripdate}>{tripdate}</Text>
-      <Text style={styles.triplength}>{triplength}</Text>
-      <Text style={styles.numlandmarks}>{numlandmarks}</Text>
+      <Text style={styles.landinfo}>{landinfo}</Text>
     </View>
-  );
-
-  const renderItem = ({ item }) => (
-    <Item
-      tripdate={item.tripdate}
-      triplength={item.triplength}
-      numlandmarks={item.numlandmarks}
-    />
   );
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-        />
-      </SafeAreaView>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <SectionList
+        sections={DATA}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => <Item landinfo={item} />}
+        renderSectionHeader={({
+          section: { tripdate, triplength, numlandmarks }
+        }) => (
+          <Text style={styles.header}>
+            {tripdate}
+            {triplength}
+            {numlandmarks}
+          </Text>
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0
+    paddingTop: StatusBar.currentHeight,
+    marginHorizontal: 16
   },
   item: {
-    backgroundColor: "#2870C2",
+    backgroundColor: "#f9c2ff",
     padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 20
+    marginVertical: 8
   },
-  tripdate: {
-    fontSize: 15
+  header: {
+    fontSize: 32,
+    backgroundColor: "#fff"
   },
-  triplength: {
-    fontSize: 15
-  },
-  numlandmarks: {
+  landinfo: {
     fontSize: 15
   }
 });
