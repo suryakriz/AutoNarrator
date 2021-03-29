@@ -12,10 +12,10 @@ import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
-import { VisitedListAdd } from '../Redux/VisitedSlice'
-import { PastTripsAdd, AddLandmarkToTrip } from '../Redux/PastTripsSlice'
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
+import { VisitedListAdd } from "../Redux/VisitedSlice";
+import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -114,16 +114,12 @@ class HomeScreen extends React.Component {
             var locationName = location.text();
             var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
 
-            if (
-              this.state.locationList.includes(locationName) == false
-            ) {
+            if (this.state.locationList.includes(locationName) == false) {
               console.log("Not Visited Location");
               response = await fetch(locationUrl);
               htmlString = await response.text();
               this.setState((state) => {
-                const locationList = state.locationList.concat(
-                  locationName
-                );
+                const locationList = state.locationList.concat(locationName);
 
                 return {
                   locationList,
@@ -180,10 +176,10 @@ class HomeScreen extends React.Component {
       });
     }
     if (this.state.intervalSet == false) {
-      console.log("Interval func not set therefor setting");
+      console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
-        console.log("interval");
+        console.log("interval: ", this.props.timeBetween);
         if (this.state.index == 0) {
           console.log("Exiting Interval");
           return;
@@ -231,12 +227,12 @@ class HomeScreen extends React.Component {
 }
 
 function mapStateToProps(state) {
-	return {
-	  voice: state.settings.voiceName,
-	  speed: state.settings.talkSpeed,
-	  timeBetween: state.settings.timeBetween,
-	  visited: state.visited,
-	}
+  return {
+    voice: state.settings.voiceName,
+    speed: state.settings.talkSpeed,
+    timeBetween: state.settings.timeBetween,
+    visited: state.visited,
+  };
 }
 
 export default connect(mapStateToProps)(HomeScreen);
