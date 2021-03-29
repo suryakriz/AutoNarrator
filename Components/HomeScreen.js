@@ -190,7 +190,7 @@ class HomeScreen extends React.Component {
         } else {
           this.loadData();
         }
-      }, 10000);
+      }, this.props.timeBetween);
     } else {
       this.state.intervalSet = false;
       console.log("clearInterval");

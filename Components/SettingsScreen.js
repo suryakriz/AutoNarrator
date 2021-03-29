@@ -64,39 +64,39 @@ class SettingsScreen extends Component {
     var timeList = [
       {
         label: "30 seconds",
-        value: 30
+        value: 3000
       },
       {
         label: "1 minute",
-        value: 60
+        value: 6000
       },
       {
         label: "5 minutes",
-        value: 300
+        value: 30000
       },
       {
         label: "10 minutes",
-        value: 600
+        value: 60000
       },
       {
         label: "15 minutes",
-        value: 900
+        value: 90000
       },
       {
         label: "20 minutes",
-        value: 1200
+        value: 120000
       },
       {
         label: "30 minutes",
-        value: 1800
+        value: 180000
       },
       {
         label: "45 minutes",
-        value: 2700
+        value: 270000
       },
       {
         label: "1 hour",
-        value: 3600
+        value: 360000
       },
     ];
     this.state = {
