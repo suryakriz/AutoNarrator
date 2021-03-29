@@ -1,7 +1,15 @@
 import * as React from "react";
-import { Image, View, StyleSheet, Button, FlatList, Text, TouchableOpacity } from "react-native";
-import AppLoading from 'expo-app-loading';
-import * as Font from 'expo-font';
+import {
+  Image,
+  View,
+  StyleSheet,
+  Button,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from '../Redux/VisitedSlice'
@@ -10,25 +18,8 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
 let customFonts = {
-  'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
 };
-
-async function ttsList() {
-  try {
-    let r1 = await Speech.getAvailableVoicesAsync();
-    var returnList = [];
-    for (var i = 0; i < r1.length; i++) {
-      var loc = r1[i].identifier.indexOf("en");
-      if (loc != -1) {
-        returnList.push(r1[i].identifier);
-      }
-    }
-    return returnList;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
-}
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -42,25 +33,37 @@ class HomeScreen extends React.Component {
       topText: "Start Your Drive To Begin Learning About Your Local History",
       bottomText: "Press Here To Start Drive",
       location: null,
-      lat : null,
-      long : null,
-      errormsg: ""
+      lat: null,
+      long: null,
+      errormsg: "",
+      inProgress: false,
+      intervalFunc: null,
+      intervalSet: false,
+      locationList: props.visited,
     };
   }
 
   getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
+    if (status !== "granted") {
       this.setState({
-        errorMessage: 'Permission to access location was denied',
+        errorMessage: "Permission to access location was denied",
       });
+      return false;
     }
 
-    let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Highest});
-    const { latitude , longitude } = location.coords
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+    const { latitude, longitude } = location.coords;
     console.log(location);
     //this.getGeocodeAsync({latitude, longitude})
-    this.setState({ location: {latitude, longitude}, lat : latitude, long: longitude});
+    this.setState({
+      location: { latitude, longitude },
+      lat: latitude,
+      long: longitude,
+    });
+    return true;
   };
   //FONT STUFF
   state = {
@@ -74,43 +77,86 @@ class HomeScreen extends React.Component {
     this._loadFontsAsync();
   }
 
-  async loadWebData() {
-    if (this.state.index == 0) {
-      //notVisited
-      var notVisited = true;
-      //put together the longitude and latitude of a current location
-      this.getLocationAsync();
+  async loadData() {
+    console.log("Running Load Data");
+    if (this.state.index == 1) {
+      console.log("Speaking State");
+      const start = () => {
+        this.setState({ inProgress: true });
+      };
+      const complete = () => {
+        this.state.inProgress && this.setState({ inProgress: false });
+      };
+
+      var have_location = await this.getLocationAsync();
       var longitude = this.state.long;
       var latitude = this.state.lat;
-      //pull the list of locations from the longitude and latitiude
-      const cheerio = require("cheerio");
-      const searchUrl =
-        "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
-        latitude +
-        "&Longitude=" +
-        longitude +
-        "&submit=Show+List";
-      var response = await fetch(searchUrl);
-      var htmlString = await response.text();
-      const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-      for (var i = 0; i < listOfLocations.length; i++) {
-        //console.log(listOfLocations.eq(i).text()); // logs individual sections
-        if (!this.props.visited.includes(location)) {
-          console.log(listOfLocations.eq(i).text());
-          var locationUrl =
-            "https://www.hmdb.org/" + listOfLocations.eq(i).attr("href"); //website of the
-          response = await fetch(locationUrl);
-          htmlString = await response.text();
-          //INFORMATION TO BE READ BY THE READER
-          var landmarkInfo = cheerio.load(htmlString)("#inscription1").text();
-          this.props.dispatch(VisitedListAdd(location));
-          Speech.speak(landmarkInfo, { voice: this.props.voice, rate: this.props.speed });
-          return landmarkInfo;
+      //var longitude = -96;
+      //var latitude = 30;
+
+      if (have_location) {
+        const cheerio = require("cheerio");
+        const searchUrl =
+          "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+          latitude +
+          "&Longitude=" +
+          longitude +
+          "&submit=Show+List";
+        var response = await fetch(searchUrl);
+        var htmlString = await response.text();
+        const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+        var count = 0;
+
+        while (count < listOfLocations.length) {
+          if (!this.state.inProgress) {
+            console.log("Not Speaking");
+            var location = listOfLocations.eq(count);
+            var locationName = location.text();
+            var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
+
+            if (
+              this.state.locationList.includes(locationName) == false
+            ) {
+              console.log("Not Visited Location");
+              response = await fetch(locationUrl);
+              htmlString = await response.text();
+              this.setState((state) => {
+                const locationList = state.locationList.concat(
+                  locationName
+                );
+
+                return {
+                  locationList,
+                  value: "",
+                };
+              });
+              var landmarkInfo = cheerio
+                .load(htmlString)("#inscription1")
+                .text();
+              this.props.dispatch(VisitedListAdd(locationName));
+              Speech.speak(landmarkInfo, {
+                voice: this.props.voice,
+                rate: this.props.speed,
+                onStart: start,
+                onDone: complete,
+              });
+              return;
+            } else {
+              console.log("Visited Location");
+              count = count + 1;
+            }
+          } else {
+            console.log("Currently Speaking");
+            return;
+          }
         }
       }
     } else {
+      console.log("Stop Speaking");
       Speech.stop();
-    } 
+      this.setState({ inProgress: false });
+      return;
+    }
   }
 
   //SWITCHING BUTTONS
@@ -133,6 +179,27 @@ class HomeScreen extends React.Component {
         bottomText: "Press Here To Stop Drive",
       });
     }
+    if (this.state.intervalSet == false) {
+      console.log("Interval func not set therefor setting");
+      this.state.intervalSet = true;
+      this.state.intervalFunc = setInterval(() => {
+        console.log("interval");
+        if (this.state.index == 0) {
+          console.log("Exiting Interval");
+          return;
+        } else {
+          this.loadData();
+        }
+      }, 10000);
+    } else {
+      this.state.intervalSet = false;
+      console.log("clearInterval");
+      clearInterval(this.state.intervalFunc);
+      this.state.intervalFunc = null;
+      console.log("Should be clearing speak");
+      Speech.stop();
+      this.setState({ inProgress: false });
+    }
   };
 
   render() {
@@ -148,7 +215,6 @@ class HomeScreen extends React.Component {
           <View>
             <TouchableOpacity
               onPress={() => {
-                this.loadWebData();
                 this.OnButtonPress();
               }}
               style={styles.buttonContainer}
@@ -172,8 +238,8 @@ function mapStateToProps(state) {
 	  visited: state.visited,
 	}
 }
-  
-export default connect(mapStateToProps)(HomeScreen)
+
+export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -200,11 +266,11 @@ const styles = StyleSheet.create({
     paddingLeft: "10%",
     paddingRight: "10%",
     textAlign: "center",
-    fontFamily: 'Quicksand-Regular'
+    fontFamily: "Quicksand-Regular",
   },
   HomeTextBot: {
     fontSize: 24,
     textAlign: "center",
-    fontFamily: 'Quicksand-Regular'
+    fontFamily: "Quicksand-Regular",
   },
 });
