@@ -46,9 +46,13 @@ export const PastTripsSlice = createSlice({
   reducers: {
     PastTripsAdd(state, action) {
       state.push(action.payload)
+    },
+    AddLandmarkToTrip(state, action) {
+        let trip = state.filter((item) => item.id == action.payload.id)
+        trip.landmarks.push(action.payload.landmark);
     }
   }
 })
 
-export const { PastTripsAdd } = PastTripsSlice.actions
+export const { PastTripsAdd, AddLandmarkToTrip } = PastTripsSlice.actions
 export default PastTripsSlice.reducer 

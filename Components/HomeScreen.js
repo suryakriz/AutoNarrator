@@ -5,6 +5,7 @@ import * as Font from 'expo-font';
 import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from '../Redux/VisitedSlice'
+import { PastTripsAdd, AddLandmarkToTrip } from '../Redux/PastTripsSlice'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
