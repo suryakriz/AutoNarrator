@@ -32,22 +32,6 @@ class LastDriveScreen extends React.Component {
   );
   render() {
     return (
-    //   <SafeAreaView style={styles.container}>
-    //     <SectionList
-    //       sections={this.props.pastTrips}
-    //       keyExtractor={(item, index) => item + index}
-    //       renderItem={({ item }) => <Item landinfo={item} />}
-    //       renderSectionHeader={({
-    //         section: { tripdate, triplength, numlandmarks }
-    //       }) => (
-    //         <Text style={styles.header}>
-    //           {tripdate}
-    //           {triplength}
-    //           {numlandmarks}
-    //         </Text>
-    //       )}
-    //     />
-    // </SafeAreaView>
       <View style={styles.container}>
         <SafeAreaView style={styles.container}>
           <FlatList
@@ -60,20 +44,6 @@ class LastDriveScreen extends React.Component {
     );
   }
 }
-
-// const Item = ({ landinfo }) => (
-//   <View style={styles.item}>
-//     <Text style={styles.landinfo}>{landinfo.landmarkDescription}</Text>
-//   </View>
-// );
-
-const PastTripHeader = ({ tripdate, triplength, numlandmarks, landmarks }) => (
-  <View style={styles.item}>
-    <Text style={styles.tripdate}>{tripdate}</Text>
-    <Text style={styles.triplength}>{triplength}</Text>
-    <Text style={styles.numlandmarks}>{numlandmarks}</Text>
-  </View>
-);
 
 function mapStateToProps(state) {
 	return {
