@@ -1,16 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = [
-    {
-        tripdate: "01/04/2021",
-        triplength: "1 hour",
-        numlandmarks: "3 landmarks",
-        id: "1"
-      },
       {
         tripdate: "02/22/2021",
         triplength: "10 minutes",
-        numlandmarks: "1 landmark",
+        numlandmarks: "2 landmarks",
         landmarks: [ 
             {
                 landmarkName: "Texas A&M Core of Cadets",
@@ -20,24 +14,20 @@ const initialState = [
                  " II effort than any other institution, including the U.S. Military Academy. Many of the Corps' traditional" +
                  " activities, such as the Aggie Band, Fish Drill Team, and Ross Volunteers, have gained national and" +
                  " international recognition. A&M's elite Corps of Cadets continues to dominate the University's unique public image."
+            },
+            {
+                landmarkName: "Chemistry Building",
+                landmarkDescription: "The Chemistry Building (1929) was designed by S. C. P. Vosper, using classical design" +
+                " proportions and details. It was extended to the east in 1981 and 1988. The ornamentation uses a variety of" +
+                " color schemes in tile patterns inspired from the art of the Mexican Americans, and includes patterns of animal" +
+                " heads, skulls, bones and fossils. The main entrance has a monumental stair leading to pedimented doorways." +
+                " The entry ceiling has intricate painted gold grillwork against a background of dark panels with complementary lighting fixtures."
             }
             
 
         ],
-        id: "2"
+        id: "1"
       },
-      {
-        tripdate: "03/04/2021",
-        triplength: "45 minutes",
-        numlandmarks: "4 landmarks",
-        id: "3"
-      },
-      {
-        tripdate: "03/23/2021",
-        triplength: "30 minutes",
-        numlandmarks: "2 landmarks",
-        id: "4"
-      }
 ]
 
 export const PastTripsSlice = createSlice({
