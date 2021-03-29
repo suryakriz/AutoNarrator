@@ -4,7 +4,7 @@ const initialState = {
   talkSpeed: 1,
   voiceName: "en-au-x-auc-network",
   voiceLabel: "AUS - Female",
-  timeBetween: 30000,
+  timeBetween: 5000,
 };
 
 const SettingsSlice = createSlice({

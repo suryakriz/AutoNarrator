@@ -49,7 +49,8 @@ class HomeScreen extends React.Component {
     const isAvailable = await SMS.isAvailableAsync();
     if(isAvailable)
     {
-      SMS.sendSMSAsync(recips,msg);
+      var msgHeader = "Howdy! Here is a list of places I visited using the Auto Narrator app: \n";
+      SMS.sendSMSAsync(recips,msgHeader + msg);
     }
     else{
       alert("sending SMS msg failed");
@@ -123,14 +124,17 @@ class HomeScreen extends React.Component {
             console.log("Not Speaking");
             var location = listOfLocations.eq(count);
             var locationName = location.text();
+            console.log(locationName);
             var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
-
-            if (this.state.locationList.includes(locationName) == false) {
+            console.log(this.state.locationList.filter((item) => item.name == locationName).length == 0);
+            if (this.state.locationList.filter((item) => item.name == locationName).length == 0) {
+              
               console.log("Not Visited Location");
               response = await fetch(locationUrl);
               htmlString = await response.text();
+              var locNameForLink = {name : locationName, url : locationUrl};
               this.setState((state) => {
-                const locationList = state.locationList.concat(locationName);
+                const locationList = state.locationList.concat(locNameForLink);
 
                 return {
                   locationList,
@@ -140,7 +144,8 @@ class HomeScreen extends React.Component {
               var landmarkInfo = cheerio
                 .load(htmlString)("#inscription1")
                 .text();
-              this.props.dispatch(VisitedListAdd(locationName));
+              
+              this.props.dispatch(VisitedListAdd(locNameForLink));
               Speech.speak(landmarkInfo, {
                 voice: this.props.voice,
                 rate: this.props.speed,
@@ -206,13 +211,18 @@ class HomeScreen extends React.Component {
       console.log("Should be clearing speak");
       Speech.stop();
 
-      var msgToSend = "Howdy! Here is a list of places I visited using the Auto Narrator app: \n";
+      var locationsForMsg = "";
       for(var i = 0; i < this.state.locationList.length; i ++)
       {
-        msgToSend += this.state.locationList[i] + " \n";
+        var name = this.state.locationList[i].name;
+        var url = this.state.locationList[i].url;
+        locationsForMsg += name +  " \n" + "Link: " + url + " \n";
       }
-      console.log(msgToSend);
-      
+      console.log(locationsForMsg);
+       //get recipient w/ alert on trip complete page
+      var recipient = "";
+     
+      this.sendSMSMsg(recipient,locationsForMsg);
       this.setState({ inProgress: false });
     }
   };
