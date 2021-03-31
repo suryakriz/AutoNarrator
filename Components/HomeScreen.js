@@ -17,6 +17,7 @@ import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as SMS from 'expo-sms';
+import * as MailComposer from 'expo-mail-composer';
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -54,6 +55,19 @@ class HomeScreen extends React.Component {
     }
     else{
       alert("sending SMS msg failed");
+    }
+  }
+  async sendEmailMsg(arg)
+  {
+    const isAvailable = await MailComposer.isAvailableAsync();
+    if(isAvailable)
+    {
+      MailComposer.composeAsync({recipients: [arg.recipients], ccRecipients: [], bccRecipients: [], subject : arg.subject, body: arg.body, isHtml : false, attachments : []}).catch((e) => {
+        console.log(e);
+      });
+    }
+    else{
+      alert("sending email failed");
     }
   }
   getLocationAsync = async () => {
@@ -204,6 +218,7 @@ class HomeScreen extends React.Component {
         }
       }, this.props.timeBetween);
     } else {
+      //END OF TRIP
       this.state.intervalSet = false;
       console.log("clearInterval");
       clearInterval(this.state.intervalFunc);
@@ -219,10 +234,11 @@ class HomeScreen extends React.Component {
         locationsForMsg += name +  " \n" + "Link: " + url + " \n";
       }
       console.log(locationsForMsg);
-       //get recipient w/ alert on trip complete page
-      var recipient = "";
-     
-      this.sendSMSMsg(recipient,locationsForMsg);
+       //get recipient/email addr w/ alert on trip complete page
+      var recipient = "2104102618";
+      var emailAddr = "nick.yannuzzi@tamu.edu";
+      this.sendEmailMsg({recipients: emailAddr, subject: "Auto Narrator Trip Report", body : locationsForMsg });
+      //this.sendSMSMsg(recipient,locationsForMsg);
       this.setState({ inProgress: false });
     }
   };
