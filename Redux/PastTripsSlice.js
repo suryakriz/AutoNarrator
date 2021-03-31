@@ -4,12 +4,9 @@ const initialState = [
       {
         tripdate: "02/22/2021",
         triplength: "10 minutes",
-        starttime: "3:00 P.M.",
-        endtime: "3:10 P.M.",
-        numlandmarks: "2",
+        numlandmarks: "2 landmarks",
         landmarks: [ 
             {
-                landmarkNumber: "1",
                 landmarkName: "Texas A&M Core of Cadets",
                 landmarkDescription: "Soon after its opening in 1876, the Agricultural and Mechanical College of" +
                  " Texas (Texas A&M) established the Corps of Cadets to fulfill its mandate to instruct its students"+
@@ -19,7 +16,6 @@ const initialState = [
                  " international recognition. A&M's elite Corps of Cadets continues to dominate the University's unique public image."
             },
             {
-                landmarkNumber: "2",
                 landmarkName: "Chemistry Building",
                 landmarkDescription: "The Chemistry Building (1929) was designed by S. C. P. Vosper, using classical design" +
                 " proportions and details. It was extended to the east in 1981 and 1988. The ornamentation uses a variety of" +
@@ -30,7 +26,7 @@ const initialState = [
             
 
         ],
-        id: "0"
+        id: "1"
       },
 ]
 

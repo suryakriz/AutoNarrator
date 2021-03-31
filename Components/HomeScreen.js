@@ -133,26 +133,21 @@ class HomeScreen extends React.Component {
             var locationName = location.text();
             var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
 
-            if (this.state.locationList.filter((item) => item.landmarkName == locationName).length == 0) {
+            if (this.state.locationList.includes(locationName) == false) {
               console.log("Not Visited Location");
               response = await fetch(locationUrl);
               htmlString = await response.text();
-              var landmarkInfo = cheerio
-                .load(htmlString)("#inscription1")
-                .text();
-              let curLength = this.state.locationList.length;
               this.setState((state) => {
-                const locationList = state.locationList.concat({
-                  landmarkName: locationName,
-                  landmarkDescription: landmarkInfo,
-                  landmarkNumber: curLength,
-                });
+                const locationList = state.locationList.concat(locationName);
 
                 return {
                   locationList,
                   value: "",
                 };
               });
+              var landmarkInfo = cheerio
+                .load(htmlString)("#inscription1")
+                .text();
               this.props.dispatch(VisitedListAdd(locationName));
               Speech.speak(landmarkInfo, {
                 voice: this.props.voice,
@@ -241,17 +236,6 @@ class HomeScreen extends React.Component {
       this.setState({
         length: hours + " hours and " + minutes + " minutes",
       })
-      let curTripID = this.props.pastTrips.length;
-      let curTrip = {
-        tripdate: this.state.date,
-        triplength: this.state.length,
-        starttime: this.state.starttime,
-        endtime: this.state.endtime,
-        numlandmarks: this.state.locationList.length,
-        landmarks: this.state.locationList,
-        id: curTripID,
-      }
-      this.props.dispatch(PastTripsAdd(curTrip))
       this.displayModal(true);
     }
   };
@@ -326,7 +310,6 @@ function mapStateToProps(state) {
     speed: state.settings.talkSpeed,
     timeBetween: state.settings.timeBetween,
     visited: state.visited,
-    pastTrips: state.pastTrips,
   };
 }
 

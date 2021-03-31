@@ -13,7 +13,7 @@ import {
 import { PickerItem } from "react-native/Libraries/Components/Picker/Picker";
 import Landmark from './Landmark'
 
-export default class PastTrip extends React.Component {
+export default class PastTrips extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -34,7 +34,7 @@ export default class PastTrip extends React.Component {
         modal = <FlatList
         data={this.props.landmarks}
         renderItem={this.renderItem}
-        keyExtractor={item => item.landmarkNumber}
+        keyExtractor={item => item.id}
       />
       } else {
         modal = null;
@@ -80,18 +80,5 @@ const styles = StyleSheet.create({
     },
     landinfo: {
       fontSize: 15
-    },
-    header: {
-      backgroundColor: "#214988",
-      fontWeight: "bold",
-      paddingVertical: 15,
-      paddingHorizontal: 10,
-      marginTop: 10,
-      width: "95%",
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      borderRadius:10,
-      
-    },
+    }
   });
