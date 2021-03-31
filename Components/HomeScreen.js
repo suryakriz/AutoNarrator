@@ -46,8 +46,7 @@ class HomeScreen extends React.Component {
       inProgress: false,
       intervalFunc: null,
       intervalSet: false,
-      locationList: [],
-      visitedList: props.visited,
+      locationList: props.visited,
       isVisible: false,
       date: "",
       starttime: "",
@@ -134,7 +133,7 @@ class HomeScreen extends React.Component {
             var locationName = location.text();
             var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
 
-            if (this.state.visitedList.filter((item) => item.landmarkName == locationName).length == 0) {
+            if (this.state.locationList.filter((item) => item.landmarkName == locationName).length == 0) {
               console.log("Not Visited Location");
               response = await fetch(locationUrl);
               htmlString = await response.text();
@@ -146,7 +145,7 @@ class HomeScreen extends React.Component {
                 const locationList = state.locationList.concat({
                   landmarkName: locationName,
                   landmarkDescription: landmarkInfo,
-                  landmarkNumber: curLength + "",
+                  landmarkNumber: curLength,
                 });
 
                 return {
@@ -154,16 +153,6 @@ class HomeScreen extends React.Component {
                   value: "",
                 };
               });
-              this.setState((state) => {
-                const visitedList = state.visitedList.concat({
-                  landmarkName: locationName,
-                });
-
-                return {
-                  visitedList,
-                  value: "",
-                };
-              })
               this.props.dispatch(VisitedListAdd(locationName));
               Speech.speak(landmarkInfo, {
                 voice: this.props.voice,
@@ -260,12 +249,9 @@ class HomeScreen extends React.Component {
         endtime: this.state.endtime,
         numlandmarks: this.state.locationList.length,
         landmarks: this.state.locationList,
-        id: curTripID + "",
+        id: curTripID,
       }
       this.props.dispatch(PastTripsAdd(curTrip))
-      this.setState({
-        locationList: []
-      })
       this.displayModal(true);
     }
   };
