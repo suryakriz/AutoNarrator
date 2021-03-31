@@ -34,7 +34,7 @@ export default class PastTrips extends React.Component {
         modal = <FlatList
         data={this.props.landmarks}
         renderItem={this.renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.landmarkNumber}
       />
       } else {
         modal = null;
