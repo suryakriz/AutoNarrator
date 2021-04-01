@@ -56,8 +56,8 @@ export default connect(mapStateToProps)(LastDriveScreen)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-    marginHorizontal: 16
+    paddingTop: "2%",
+    marginHorizontal: 10
   },
   item: {
     backgroundColor: "#f9c2ff",

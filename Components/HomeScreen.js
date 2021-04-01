@@ -55,6 +55,7 @@ class HomeScreen extends React.Component {
       endtime:"",
       endtime2: null,
       length: null,
+      reading: false,
     };
   }
 
@@ -63,6 +64,8 @@ class HomeScreen extends React.Component {
   }
 
   getLocationAsync = async () => {
+    
+    console.log("Getting Location");
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       this.setState({
@@ -71,6 +74,7 @@ class HomeScreen extends React.Component {
       return false;
     }
 
+    console.log("Getting Current Location");
     let location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
@@ -82,6 +86,7 @@ class HomeScreen extends React.Component {
       lat: latitude,
       long: longitude,
     });
+    console.log("Got Location");
     return true;
   };
 
@@ -99,6 +104,7 @@ class HomeScreen extends React.Component {
 
   async loadData() {
     console.log("Running Load Data");
+    console.log("Index: ", this.state.index);
     if (this.state.index == 1) {
       console.log("Speaking State");
       const start = () => {
