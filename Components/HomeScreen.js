@@ -210,6 +210,50 @@ class HomeScreen extends React.Component {
     return;
   }
 
+  startTimer() {
+    this.setState({
+      date: moment().format("MM/DD/YYYY"),
+      starttime: moment().format("hh:mm a"),
+      starttime2: Date.now(),
+    });
+  }
+
+  stopTimer() {
+    this.setState({
+      endtime: moment().format("hh:mm a"),
+    });
+    var duration = Date.now() - this.state.starttime2;
+
+    var minutes = Math.floor((duration / (1000 * 60)) % 60);
+    var hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    const timeStr = hours + " hours and " + minutes + " minutes";
+    this.state.length = timeStr;
+    console.log(timeStr);
+    this.setState({
+      length: timeStr,
+    });
+  }
+
+  dispatchTripDetails() {
+    let curTripID = this.props.pastTrips.length;
+    let curTrip = {
+      tripdate: this.state.date,
+      triplength: this.state.length,
+      starttime: this.state.starttime,
+      endtime: this.state.endtime,
+      numlandmarks: this.state.locationList.length,
+      landmarks: this.state.locationList,
+      id: curTripID + "",
+    };
+    this.props.dispatch(PastTripsAdd(curTrip));
+    this.setState({
+      locationList: [],
+    });
+  }
+
   //SWITCHING BUTTONS
   OnButtonPress = () => {
     console.log("Current Index: " + this.state.index);
@@ -232,11 +276,8 @@ class HomeScreen extends React.Component {
       });
     }
     if (this.state.intervalSet == false) {
-      this.setState({
-        date: moment().format("MM/DD/YYYY"),
-        starttime: moment().format("hh:mm a"),
-        starttime2: Date.now(),
-      });
+      this.startTimer();
+
       console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
@@ -256,38 +297,11 @@ class HomeScreen extends React.Component {
       console.log("Should be clearing speak");
       Speech.stop();
       this.setState({ inProgress: false, criticalSectionAvailable: true });
-    }
-    console.log("New Index: " + this.state.index);
-    if (this.state.index == 1) {
-      this.setState({
-        endtime: moment().format("hh:mm a"),
-      });
-      var duration = Date.now() - this.state.starttime2;
-
-      var minutes = Math.floor((duration / (1000 * 60)) % 60);
-      var hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      this.setState({
-        length: hours + " hours and " + minutes + " minutes",
-      });
-      let curTripID = this.props.pastTrips.length;
-      let curTrip = {
-        tripdate: this.state.date,
-        triplength: this.state.length,
-        starttime: this.state.starttime,
-        endtime: this.state.endtime,
-        numlandmarks: this.state.locationList.length,
-        landmarks: this.state.locationList,
-        id: curTripID + "",
-      };
-      this.props.dispatch(PastTripsAdd(curTrip));
-      this.setState({
-        locationList: [],
-      });
+      this.stopTimer();
+      this.dispatchTripDetails();
       this.displayModal(true);
     }
+    console.log("New Index: " + this.state.index);
   };
 
   render() {
