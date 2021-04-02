@@ -19,10 +19,10 @@ import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blue";
-import Icon from 'react-native-ico-miscellaneous';
-import Icon2 from 'react-native-ico-basic';
+import Icon from "react-native-ico-miscellaneous";
+import Icon2 from "react-native-ico-basic";
 import { mdiOrnament } from "@mdi/js";
-import moment from 'moment';
+import moment from "moment";
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -52,19 +52,19 @@ class HomeScreen extends React.Component {
       date: "",
       starttime: "",
       starttime2: null,
-      endtime:"",
+      endtime: "",
       endtime2: null,
       length: null,
       reading: false,
+      criticalSectionAvailable: true,
     };
   }
 
-  displayModal(show){
-    this.setState({isVisible: show})
+  displayModal(show) {
+    this.setState({ isVisible: show });
   }
 
   getLocationAsync = async () => {
-    
     console.log("Getting Location");
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
@@ -105,100 +105,114 @@ class HomeScreen extends React.Component {
   async loadData() {
     console.log("Running Load Data");
     console.log("Index: ", this.state.index);
-    if (this.state.index == 1) {
-      console.log("Speaking State");
-      const start = () => {
-        this.setState({ inProgress: true });
-      };
-      const complete = () => {
-        this.state.inProgress && this.setState({ inProgress: false });
-      };
+    if (this.state.criticalSectionAvailable == true) {
+      console.log("Critical Section Available");
+      this.state.criticalSectionAvailable = false;
+      if (this.state.index == 1) {
+        console.log("Speaking State");
+        const start = () => {
+          this.setState({ inProgress: true });
+        };
+        const complete = () => {
+          this.state.inProgress && this.setState({ inProgress: false });
+        };
+        var have_location = await this.getLocationAsync();
+        var longitude = this.state.long;
+        var latitude = this.state.lat;
 
-      var have_location = await this.getLocationAsync();
-      var longitude = this.state.long;
-      var latitude = this.state.lat;
-      //var longitude = -96;
-      //var latitude = 30;
+        if (have_location) {
+          const cheerio = require("cheerio");
+          const searchUrl =
+            "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
+            latitude +
+            "&Longitude=" +
+            longitude +
+            "&submit=Show+List";
+          var response = await fetch(searchUrl);
+          console.log("Fetch Done");
+          var htmlString = await response.text();
+          console.log("response Done");
+          const listOfLocations = cheerio.load(htmlString)("a:even", "li");
+          console.log("load Done");
+          var count = 0;
 
-      if (have_location) {
-        const cheerio = require("cheerio");
-        const searchUrl =
-          "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
-          latitude +
-          "&Longitude=" +
-          longitude +
-          "&submit=Show+List";
-        var response = await fetch(searchUrl);
-        var htmlString = await response.text();
-        const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-        var count = 0;
+          while (count < listOfLocations.length) {
+            if (!this.state.inProgress) {
+              console.log("Not Speaking");
+              var location = listOfLocations.eq(count);
+              var locationName = location.text();
+              var locationUrl = "https://www.hmdb.org/" + location.attr("href");
 
-        while (count < listOfLocations.length) {
-          if (!this.state.inProgress) {
-            console.log("Not Speaking");
-            var location = listOfLocations.eq(count);
-            var locationName = location.text();
-            var locationUrl = "https://www.hmdb.org/" + location.attr("href"); //website of the
+              if (
+                this.state.visitedList.filter(
+                  (item) => item.landmarkName == locationName
+                ).length == 0
+              ) {
+                console.log("Not Visited Location");
+                response = await fetch(locationUrl);
+                htmlString = await response.text();
+                var landmarkInfo = cheerio
+                  .load(htmlString)("#inscription1")
+                  .text();
+                let curLength = this.state.locationList.length;
+                this.setState((state) => {
+                  const locationList = state.locationList.concat({
+                    landmarkName: locationName,
+                    landmarkDescription: landmarkInfo,
+                    landmarkNumber: curLength + "",
+                  });
 
-            if (this.state.visitedList.filter((item) => item.landmarkName == locationName).length == 0) {
-              console.log("Not Visited Location");
-              response = await fetch(locationUrl);
-              htmlString = await response.text();
-              var landmarkInfo = cheerio
-                .load(htmlString)("#inscription1")
-                .text();
-              let curLength = this.state.locationList.length;
-              this.setState((state) => {
-                const locationList = state.locationList.concat({
-                  landmarkName: locationName,
-                  landmarkDescription: landmarkInfo,
-                  landmarkNumber: curLength + "",
+                  return {
+                    locationList,
+                    value: "",
+                  };
                 });
+                this.setState((state) => {
+                  const visitedList = state.visitedList.concat({
+                    landmarkName: locationName,
+                  });
 
-                return {
-                  locationList,
-                  value: "",
-                };
-              });
-              this.setState((state) => {
-                const visitedList = state.visitedList.concat({
-                  landmarkName: locationName,
+                  return {
+                    visitedList,
+                    value: "",
+                  };
                 });
-
-                return {
-                  visitedList,
-                  value: "",
-                };
-              })
-              this.props.dispatch(VisitedListAdd(locationName));
-              Speech.speak(landmarkInfo, {
-                voice: this.props.voice,
-                rate: this.props.speed,
-                onStart: start,
-                onDone: complete,
-              });
-              return;
+                this.props.dispatch(VisitedListAdd(locationName));
+                Speech.speak(landmarkInfo, {
+                  voice: this.props.voice,
+                  rate: this.props.speed,
+                  onStart: start,
+                  onDone: complete,
+                });
+                this.state.criticalSectionAvailable = true;
+                return;
+              } else {
+                console.log("Visited Location");
+                count = count + 1;
+              }
             } else {
-              console.log("Visited Location");
-              count = count + 1;
+              console.log("Currently Speaking");
+              this.state.criticalSectionAvailable = true;
+              return;
             }
-          } else {
-            console.log("Currently Speaking");
-            return;
           }
         }
+      } else {
+        console.log("Stop Speaking");
+        Speech.stop();
+        this.setState({ inProgress: false });
+        this.state.criticalSectionAvailable = true;
+        return;
       }
     } else {
-      console.log("Stop Speaking");
-      Speech.stop();
-      this.setState({ inProgress: false });
-      return;
+      console.log("Critical Section Not Available");
     }
+    return;
   }
 
   //SWITCHING BUTTONS
   OnButtonPress = () => {
-    console.log("Current Index: " + this.state.index)
+    console.log("Current Index: " + this.state.index);
     if (this.imageBool) {
       this.imageBool = false;
       this.setState({
@@ -219,10 +233,10 @@ class HomeScreen extends React.Component {
     }
     if (this.state.intervalSet == false) {
       this.setState({
-        date: moment().format('MM/DD/YYYY'),
-        starttime: moment().format('hh:mm a'),
+        date: moment().format("MM/DD/YYYY"),
+        starttime: moment().format("hh:mm a"),
         starttime2: Date.now(),
-      })
+      });
       console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
@@ -241,23 +255,23 @@ class HomeScreen extends React.Component {
       this.state.intervalFunc = null;
       console.log("Should be clearing speak");
       Speech.stop();
-      this.setState({ inProgress: false });
+      this.setState({ inProgress: false, criticalSectionAvailable: true });
     }
-    console.log("New Index: " + this.state.index)
-    if (this.state.index == 1){
+    console.log("New Index: " + this.state.index);
+    if (this.state.index == 1) {
       this.setState({
-        endtime: moment().format('hh:mm a'),
-      })
+        endtime: moment().format("hh:mm a"),
+      });
       var duration = Date.now() - this.state.starttime2;
 
       var minutes = Math.floor((duration / (1000 * 60)) % 60);
       var hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-      hours = (hours < 10) ? "0" + hours : hours;
-      minutes = (minutes < 10) ? "0" + minutes : minutes;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
       this.setState({
         length: hours + " hours and " + minutes + " minutes",
-      })
+      });
       let curTripID = this.props.pastTrips.length;
       let curTrip = {
         tripdate: this.state.date,
@@ -267,11 +281,11 @@ class HomeScreen extends React.Component {
         numlandmarks: this.state.locationList.length,
         landmarks: this.state.locationList,
         id: curTripID + "",
-      }
-      this.props.dispatch(PastTripsAdd(curTrip))
+      };
+      this.props.dispatch(PastTripsAdd(curTrip));
       this.setState({
-        locationList: []
-      })
+        locationList: [],
+      });
       this.displayModal(true);
     }
   };
@@ -281,40 +295,68 @@ class HomeScreen extends React.Component {
       return (
         <View style={styles.container}>
           <Modal
-            animationType = {"slide"}
+            animationType={"slide"}
             transparent={false}
             visible={this.state.isVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has now been closed.');
-            }}>
-              <View style={{height: "95%"}}>
-                <Text style = { styles.panelHeader }> After Drive Summary! </Text>
-                <ScrollView style={styles.scroll}>
-                  <View style={styles.header}>
-                    <Icon color="#ffffff" height={20} name="car" />
-                    <Text style={{ marginLeft:"3%" , color: "#ffffff", fontFamily: "Quicksand-Regular"}}> Drive Information </Text>
-                  </View>
-                  <Text style={styles.paneltext}>{'\u2022 Date: '} {this.state.date}</Text>
-                  <Text style={styles.paneltext}>{'\u2022 Start Time: '} {this.state.starttime}</Text>
-                  <Text style={styles.paneltext}>{'\u2022 End Time: '} {this.state.endtime}</Text>
-                  <Text style={styles.paneltext}>{'\u2022 Trip Length: '} {this.state.length}</Text>
-                  <View style={styles.header}>
-                    <Icon2 color="#ffffff" height={20} name="achievement" />
-                    <Text style={{ marginLeft:"3%" , color: "#ffffff", fontFamily: "Quicksand-Regular"}}> Landmark Report </Text>
-                  </View>
-                </ScrollView>
-                <View style={styles.button}>
-                  <AwesomeButtonBlue
-                    progress
-                    type="primary"
-                    height={40}
-                    onPress={() => {
-                      this.displayModal(!this.state.isVisible);}}
-                  > 
-                    <Text style = { styles.textButton }>Close Panel</Text>
-                  </AwesomeButtonBlue>
+              Alert.alert("Modal has now been closed.");
+            }}
+          >
+            <View style={{ height: "95%" }}>
+              <Text style={styles.panelHeader}> After Drive Summary! </Text>
+              <ScrollView style={styles.scroll}>
+                <View style={styles.header}>
+                  <Icon color="#ffffff" height={20} name="car" />
+                  <Text
+                    style={{
+                      marginLeft: "3%",
+                      color: "#ffffff",
+                      fontFamily: "Quicksand-Regular",
+                    }}
+                  >
+                    {" "}
+                    Drive Information{" "}
+                  </Text>
                 </View>
+                <Text style={styles.paneltext}>
+                  {"\u2022 Date: "} {this.state.date}
+                </Text>
+                <Text style={styles.paneltext}>
+                  {"\u2022 Start Time: "} {this.state.starttime}
+                </Text>
+                <Text style={styles.paneltext}>
+                  {"\u2022 End Time: "} {this.state.endtime}
+                </Text>
+                <Text style={styles.paneltext}>
+                  {"\u2022 Trip Length: "} {this.state.length}
+                </Text>
+                <View style={styles.header}>
+                  <Icon2 color="#ffffff" height={20} name="achievement" />
+                  <Text
+                    style={{
+                      marginLeft: "3%",
+                      color: "#ffffff",
+                      fontFamily: "Quicksand-Regular",
+                    }}
+                  >
+                    {" "}
+                    Landmark Report{" "}
+                  </Text>
+                </View>
+              </ScrollView>
+              <View style={styles.button}>
+                <AwesomeButtonBlue
+                  progress
+                  type="primary"
+                  height={40}
+                  onPress={() => {
+                    this.displayModal(!this.state.isVisible);
+                  }}
+                >
+                  <Text style={styles.textButton}>Close Panel</Text>
+                </AwesomeButtonBlue>
               </View>
+            </View>
           </Modal>
           <View>
             <Text style={styles.HomeTextTop}>{this.state.topText}</Text>
@@ -405,8 +447,8 @@ const styles = StyleSheet.create({
   },
   closeText: {
     fontSize: 24,
-    color: '#00479e',
-    textAlign: 'center',
+    color: "#00479e",
+    textAlign: "center",
     fontFamily: "Quicksand-Regular",
   },
   button: {
