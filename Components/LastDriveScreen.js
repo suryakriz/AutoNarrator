@@ -14,6 +14,11 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import { VisitedListAdd } from '../Redux/VisitedSlice'
 import PastTrip from './PastTrip'
+import * as Font from "expo-font";
+
+let customFonts = {
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
+};
 
 class LastDriveScreen extends React.Component {
 
@@ -21,6 +26,19 @@ class LastDriveScreen extends React.Component {
     super(props);
 
   }
+
+  //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
+  }
+
   renderItem = ({ item }) => (
       <PastTrip
       tripdate={item.tripdate}
@@ -66,9 +84,11 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 32,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    fontFamily: "Quicksand-Regular",
   },
   landinfo: {
-    fontSize: 15
+    fontSize: 15,
+    fontFamily: "Quicksand-Regular",
   }
 });

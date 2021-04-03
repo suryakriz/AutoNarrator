@@ -16,17 +16,34 @@ import Icon from 'react-native-ico-ui-interface';
 import Icon2 from 'react-native-ico-miscellaneous';
 import Icon3 from 'react-native-ico-basic';
 import Dash from 'react-native-dash';
+import * as Font from "expo-font";
+
+let customFonts = {
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
+};
 
 
 
 export default class PastTrips extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-          modalVisibile: false,
-          mainIcon: true
-      }
+  constructor(props) {
+    super(props);
+    this.state = {
+        modalVisibile: false,
+        mainIcon: true
     }
+  }
+
+  //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
+  }
 
     renderItem = ({item}) => (
       <Landmark
@@ -58,7 +75,7 @@ export default class PastTrips extends React.Component {
             >
               <View style={styles.header}>
                 <Icon2 color="#ffffff" height={20} name="car" />
-                <Text style={{ marginLeft:"3%" , color: "#ffffff", fontSize: 20, fontWeight: "bold",}}> Drive Information </Text>  
+                <Text style={{fontFamily: "Quicksand-Regular", marginLeft:"3%" , color: "#ffffff", fontSize: 20, }}> Drive Information </Text>  
               </View>
                 <Text style={styles.landinfo}>{"Drive Date: "}{this.props.tripdate}</Text>
                 <Text style={styles.landinfo}>{"Drive Length: "}{this.props.triplength}</Text>
@@ -76,7 +93,7 @@ export default class PastTrips extends React.Component {
             {this.state.modalVisibile &&
               <View style={styles.header2}>
                 <Icon3 color="#ffffff" height={20} name="achievement" />
-                <Text style={{ marginLeft:"3%" , color: "#ffffff", fontSize: 20, fontWeight: "bold",}}> Landmarks </Text>  
+                <Text style={{fontFamily: "Quicksand-Regular", marginLeft:"3%" , color: "#ffffff", fontSize: 20, }}> Landmarks </Text>  
               </View>
             }
             {modal}
@@ -100,6 +117,7 @@ const styles = StyleSheet.create({
     landinfo: {
       fontSize: 15,
       color: '#fff',
+      fontFamily: "Quicksand-Regular",
     },
     header: {
       fontWeight: "bold",

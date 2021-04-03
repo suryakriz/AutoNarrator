@@ -11,16 +11,33 @@ import {
   Modal,
 } from "react-native";
 import Icon from 'react-native-ico-ui-interface';
+import * as Font from "expo-font";
+
+let customFonts = {
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
+};
 
 
 export default class Landmark extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state= {
-          modalVisible: false,
-          mainIcon: true
-      }
+  constructor(props) {
+    super(props);
+    this.state= {
+        modalVisible: false,
+        mainIcon: true
     }
+  }
+
+    //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
+  }
 
     render() {
         let modal;
@@ -86,9 +103,11 @@ const styles = StyleSheet.create({
     },
     landname: {
       fontSize: 15,
-      padding: 20
+      padding: 20,
+      fontFamily: "Quicksand-Regular",
     },
     landinfo: {
-      fontSize: 15
+      fontSize: 15,
+      fontFamily: "Quicksand-Regular",
     }
   });

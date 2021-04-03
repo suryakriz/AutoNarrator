@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import store from './Redux/Store'
 import { Provider } from 'react-redux';
 
+
 const Tab = createBottomTabNavigator();
 
 //BOTTOM TAB STUFF

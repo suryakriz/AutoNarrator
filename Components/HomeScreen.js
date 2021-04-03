@@ -60,10 +60,12 @@ class HomeScreen extends React.Component {
     };
   }
 
+  //POP UP STATE
   displayModal(show) {
     this.setState({ isVisible: show });
   }
 
+  //LOCATION STUFF
   getLocationAsync = async () => {
     console.log("Getting Location");
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -102,6 +104,7 @@ class HomeScreen extends React.Component {
     this._loadFontsAsync();
   }
 
+  //LOAD DATA AND SPEAK
   async loadData() {
     console.log("Running Load Data");
     console.log("Index: ", this.state.index);
@@ -210,6 +213,7 @@ class HomeScreen extends React.Component {
     return;
   }
 
+  //START TIMER
   startTimer() {
     this.setState({
       date: moment().format("MM/DD/YYYY"),
@@ -218,6 +222,7 @@ class HomeScreen extends React.Component {
     });
   }
 
+  //STOP TIMER
   stopTimer() {
     this.setState({
       endtime: moment().format("hh:mm a"),
@@ -237,6 +242,7 @@ class HomeScreen extends React.Component {
     });
   }
 
+  //REDUX CONNECTION
   dispatchTripDetails() {
     let curTripID = this.props.pastTrips.length;
     let curTrip = {
@@ -304,6 +310,7 @@ class HomeScreen extends React.Component {
     console.log("New Index: " + this.state.index);
   };
 
+  //WHAT IS ON THE SCREEN
   render() {
     if (this.state.fontsLoaded) {
       return (
@@ -396,6 +403,7 @@ class HomeScreen extends React.Component {
   }
 }
 
+//REDUX
 function mapStateToProps(state) {
   return {
     voice: state.settings.voiceName,
@@ -408,6 +416,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps)(HomeScreen);
 
+//STYLESHEET
 const styles = StyleSheet.create({
   container: {
     flex: 1,

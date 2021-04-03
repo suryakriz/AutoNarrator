@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, StyleSheet, View, Text, Alert } from "react-native";
+import { Button, StyleSheet, View, Text, Alert, TouchableOpacity } from "react-native";
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
@@ -9,6 +9,11 @@ import Icon from 'react-native-ico-flags';
 import Icon2 from 'react-native-ico-ui-interface';
 import Icon3 from 'react-native-ico-essential';
 import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blue";
+import * as Font from "expo-font";
+
+let customFonts = {
+  "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
+};
 
 
 function DropdownItem(label) {
@@ -112,11 +117,25 @@ class SettingsScreen extends Component {
     this.ChangeVoice = this.ChangeVoice.bind(this)
   }
 
+  //SETTING TEST VOICE
   async speaktest(){
     var thingToSay = "This is the voice "+ (this.state.label) +" at the speed " + this.state.rate + ". If you do not like it feel free to change the settings.";
     Speech.speak(thingToSay, {voice: this.state.voice, rate: this.state.rate});
   }
 
+  //FONT STUFF
+  state = {
+    fontsLoaded: false,
+  };
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
+  componentDidMount() {
+    this._loadFontsAsync();
+  }
+
+  //ARE YOU SURE BUTTON TO CLEARING DATA 
   createTwoButtonAlert = () =>
     Alert.alert(
       "Are you sure?",
@@ -131,15 +150,16 @@ class SettingsScreen extends Component {
       ]
     );
 
+  //WHATS ON THE SCREEN
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Icon3 color= "#ffffff" height= {20} name="speaker-2"/>
-          <Text style={{color: "#ffffff"}}> Voice Settings </Text>
+          <Text style={{fontFamily: "Quicksand-Regular", color: "#ffffff"}}> Voice Settings </Text>
         </View>
         <View style={styles.settings}>
-          <Text>English Voice Accent:</Text>
+          <Text style={{fontFamily: "Quicksand-Regular",}}>English Voice Accent:</Text>
           <DropDownPicker
             items={this.state.vList}
             defaultValue={this.state.voice}
@@ -148,6 +168,7 @@ class SettingsScreen extends Component {
             itemStyle={{
               justifyContent: "flex-start",
             }}
+            labelStyle={{fontFamily: "Quicksand-Regular",}}
             dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
             onChangeItem={(item) =>
               this.ChangeVoice(item)
@@ -155,7 +176,7 @@ class SettingsScreen extends Component {
           />
         </View>
         <View style={styles.settings}>
-          <Text>
+          <Text style={{fontFamily: "Quicksand-Regular",}}>
             Voice Speed: {this.state.rate && +this.state.rate.toFixed(3)}
           </Text>
           <Slider
@@ -175,17 +196,18 @@ class SettingsScreen extends Component {
             onPress={next => {
             this.speaktest();
             next();
+
             }}
           >
-            Click Here to Test Voice
+            <Text style={styles.textButton}>Click Here to Test Voice</Text>
           </AwesomeButtonBlue>
         </View>
         <View style={styles.header}>
           <Icon3 color= "#ffffff" name="settings"/>
-          <Text style={{color: "#ffffff"}}> Other Settings </Text>
+          <Text style={{fontFamily: "Quicksand-Regular",color: "#ffffff"}}> Other Settings </Text>
         </View>
         <View style={styles.settings}>
-          <Text>Time Between Landmarks: </Text>
+          <Text style={{fontFamily: "Quicksand-Regular",}}>Time Between Landmarks: </Text>
           <DropDownPicker
             items={this.state.tList}
             defaultValue={this.state.time}
@@ -194,7 +216,8 @@ class SettingsScreen extends Component {
             itemStyle={{
               justifyContent: "flex-start",
             }}
-            dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999  }}
+            dropDownStyle={{ backgroundColor: "#fafafa",  elevation: 999}}
+            labelStyle={{fontFamily: "Quicksand-Regular",}}
             onChangeItem={(item) =>
               this.ChangeTimeBetween(item)
             }
@@ -210,7 +233,7 @@ class SettingsScreen extends Component {
             next();
             }}
           >
-            Click Here to Clear Data
+            <Text style={styles.textButton}>Click Here to Clear Data</Text>
           </AwesomeButtonBlue>
         </View>
       </View>
@@ -268,6 +291,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
     margin: 10,
+    fontFamily: "Quicksand-Regular",
   },
   header: {
     backgroundColor: "#214988",
@@ -280,6 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     borderRadius:10,
+    fontFamily: "Quicksand-Regular",
     
   },
   settings: {
@@ -287,5 +312,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  textButton: {
+    fontSize: 18,
+    fontFamily: "Quicksand-Regular",
+    color: "#fff",
+    padding: 5,
   },
 });
