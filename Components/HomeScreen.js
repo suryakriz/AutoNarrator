@@ -321,6 +321,7 @@ class HomeScreen extends React.Component {
 
   //WHAT IS ON THE SCREEN
   render() {
+    let lastDriveLandmarks = this.props.pastTrips[this.props.pastTrips.length - 1].landmarks;
     if (this.state.fontsLoaded) {
       return (
         <View style={styles.container}>
@@ -373,12 +374,13 @@ class HomeScreen extends React.Component {
                     Landmark Report{" "}
                   </Text>
                 </View>
-                <FlatList
-                  data={this.state.locationList}
+                
+              </ScrollView>
+              <FlatList
+                  data={lastDriveLandmarks}
                   renderItem={this.renderItem}
                   keyExtractor={item => item.landmarkNumber}
                 />
-              </ScrollView>
               <View style={styles.button}>
                 <AwesomeButtonBlue
                   progress
