@@ -23,7 +23,6 @@ import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blu
 import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
 import moment from "moment";
-import Landmark from './Landmark'
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),

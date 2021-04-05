@@ -46,7 +46,9 @@ export const PastTripsSlice = createSlice({
         trip.landmarks.push(action.payload.landmark);
     },
     ResetPastTrips(state) {
+        let curState = state
         state = initialState
+        return state
     }
   }
 })

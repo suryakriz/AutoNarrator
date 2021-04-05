@@ -3,7 +3,9 @@ import { Button, StyleSheet, View, Text, Alert, TouchableOpacity } from "react-n
 import Slider from "@react-native-community/slider";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Speech from "expo-speech";
-import { SetVoice, SetSpeed, SetTimeBetween } from '../Redux/SettingsSlice'
+import { SetVoice, SetSpeed, SetTimeBetween, ResetSettings } from '../Redux/SettingsSlice'
+import { ResetPastTrips } from '../Redux/PastTripsSlice'
+import { ResetVisited } from '../Redux/VisitedSlice'
 import { connect, useDispatch } from 'react-redux'
 import Icon from 'react-native-ico-flags';
 import Icon2 from 'react-native-ico-ui-interface';
@@ -146,7 +148,7 @@ class SettingsScreen extends Component {
           onPress: () => console.log("Cancel Pressed"), //PUT FUNCTION TO DELETE DATA
           style: "cancel"
         },
-        { text: "Confirm", onPress: () => console.log("Confirm Pressed") }
+        { text: "Confirm", onPress: () => this.ClearData() }
       ]
     );
 
@@ -258,6 +260,18 @@ class SettingsScreen extends Component {
       time: rate.value
     })
     this.props.dispatch(SetTimeBetween(rate.value));
+  }
+
+  ClearData() {
+    this.props.dispatch(ResetSettings());
+    this.props.dispatch(ResetPastTrips());
+    this.props.dispatch(ResetVisited());
+    this.setState({
+      label: this.props.label,
+      voice: this.props.voice,
+      time: this.props.time,
+      rate: this.props.rate,
+    })
   }
   
 }
