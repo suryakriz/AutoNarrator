@@ -353,7 +353,7 @@ class HomeScreen extends React.Component {
               Alert.alert("Modal has now been closed.");
             }}
           >
-            <View style={{ height: "95%" }}>
+            <View style={{ height: "98%" }}>
               <Text style={styles.panelHeader}> After Drive Summary! </Text>
                 <View style={styles.header}>
                   <Icon color="#ffffff" height={20} name="car" />
@@ -398,6 +398,32 @@ class HomeScreen extends React.Component {
                   renderItem={this.renderItem}
                   keyExtractor={item => item.landmarkNumber}
                 />
+              <View style={{marginHorizontal: "20%", marginVertical: "2%",flexDirection: "row", justifyContent: "space-between", alignItems: "center", textAlign: "center"}}>
+                <Text style={styles.paneltext}>Share Trip: </Text> 
+                <AwesomeButtonBlue
+                  progress
+                  type="primary"
+                  height={30}
+                  onPress={() => {
+                    //ADD EMAIL FUNCTION HERE
+                  }}
+                >
+                  <Icon2 color="#ffffff" height={15} name="message" />
+                  <Text style={styles.textButtonsmall}>SMS</Text>
+                </AwesomeButtonBlue>
+                
+                <AwesomeButtonBlue
+                  progress
+                  type="primary"
+                  height={30}
+                  onPress={() => {
+                    //ADD EMAIL FUNCTION HERE
+                  }}
+                >
+                  <Icon2 color="#ffffff" height={15} name="letter" />
+                  <Text style={styles.textButtonsmall}>Email</Text>
+                </AwesomeButtonBlue>
+              </View>
               <View style={styles.button}>
                 <AwesomeButtonBlue
                   progress
@@ -496,11 +522,24 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 5,
   },
+  paneltextsmall: {
+    fontSize: 12,
+    fontFamily: "Quicksand-Regular",
+    marginLeft: 20,
+    marginTop: 5,
+  },
   textButton: {
     fontSize: 18,
     fontFamily: "Quicksand-Regular",
     color: "#fff",
     padding: 5,
+  },
+  textButtonsmall: {
+    fontSize: 12,
+    fontFamily: "Quicksand-Regular",
+    color: "#fff",
+    paddingRight: 5,
+    textAlign: "center"
   },
   closeText: {
     fontSize: 24,
