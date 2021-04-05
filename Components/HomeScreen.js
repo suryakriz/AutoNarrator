@@ -16,13 +16,13 @@ import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from "../Redux/VisitedSlice";
 import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
+import Landmark from "./Landmark"
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blue";
 import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
 import moment from "moment";
-import Landmark from './Landmark'
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -277,6 +277,14 @@ class HomeScreen extends React.Component {
     });
   }
 
+  //LAST DRIVE LANDMARK LIST
+  renderItem = ({item}) => (
+    <Landmark
+      landmarkName={item.landmarkName}
+      landmarkDescription={item.landmarkDescription}
+    />
+  )
+
   //SWITCHING BUTTONS
   OnButtonPress = () => {
     console.log("Current Index: " + this.state.index);
@@ -342,6 +350,7 @@ class HomeScreen extends React.Component {
 
   //WHAT IS ON THE SCREEN
   render() {
+    let lastDriveLandmarks = this.props.pastTrips[this.props.pastTrips.length - 1].landmarks;
     if (this.state.fontsLoaded) {
       return (
         <View style={styles.container}>

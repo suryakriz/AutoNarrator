@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     talkSpeed: 1,
-    voiceName: "en-au-x-auc-network",
-    voiceLabel: "AUS - Female",
+    voiceName: "en-us-x-sfg#female_3-local",
+    voiceLabel: "US - Female",
     timeBetween: 30000
 }
 
@@ -21,8 +21,12 @@ const SettingsSlice = createSlice({
         SetTimeBetween(state, action) {
             state.timeBetween = action.payload
         },
+        ResetSettings(state) {
+            state = initialState
+            return state
+        }
     }
 })
 
-export const { SetSpeed, SetVoice, SetTimeBetween } = SettingsSlice.actions
+export const { SetSpeed, SetVoice, SetTimeBetween, ResetSettings } = SettingsSlice.actions
 export default SettingsSlice.reducer

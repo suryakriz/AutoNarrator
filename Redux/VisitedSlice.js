@@ -8,9 +8,13 @@ export const VisitedSlice = createSlice({
   reducers: {
     VisitedListAdd(state, action) {
       state.push(action.payload)
+    },
+    ResetVisited(state) {
+      state = initialState
+      return state
     }
   }
 })
 
-export const { VisitedListAdd } = VisitedSlice.actions
+export const { VisitedListAdd, ResetVisited } = VisitedSlice.actions
 export default VisitedSlice.reducer 
