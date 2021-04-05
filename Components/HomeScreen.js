@@ -9,6 +9,7 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
@@ -24,6 +25,8 @@ import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
 import moment from "moment";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+import * as SMS from "expo-sms";
+import * as MailComposer from "expo-mail-composer";
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -59,6 +62,8 @@ class HomeScreen extends React.Component {
       length: null,
       reading: false,
       criticalSectionAvailable: true,
+      msgtosend: "",
+      msglist: [],
     };
   }
 
@@ -67,6 +72,35 @@ class HomeScreen extends React.Component {
     this.setState({ isVisible: show });
   }
 
+  //sms and email -----
+  async sendSMSMsg(recips, msg) {
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+      var msgHeader =
+        "Howdy! Here is a list of places I visited using the Auto Narrator app: \n";
+      SMS.sendSMSAsync(recips, msgHeader + msg);
+    } else {
+      alert("sending SMS msg failed");
+    }
+  }
+  async sendEmailMsg(arg) {
+    const isAvailable = await MailComposer.isAvailableAsync();
+    if (isAvailable) {
+      MailComposer.composeAsync({
+        recipients: [arg.recipients],
+        ccRecipients: [],
+        bccRecipients: [],
+        subject: arg.subject,
+        body: arg.body,
+        isHtml: false,
+        attachments: [],
+      }).catch((e) => {
+        console.log(e);
+      });
+    } else {
+      alert("sending email failed");
+    }
+  }
   //LOCATION STUFF
   getLocationAsync = async () => {
     console.log("Getting Location");
@@ -178,6 +212,10 @@ class HomeScreen extends React.Component {
                     value: "",
                   };
                 });
+                const msglist = this.state.msglist.concat({
+                  name: locationName,
+                  url: locationUrl,
+                });
                 this.setState((state) => {
                   const visitedList = state.visitedList.concat({
                     landmarkName: locationName,
@@ -185,6 +223,7 @@ class HomeScreen extends React.Component {
 
                   return {
                     visitedList,
+                    msglist,
                     value: "",
                   };
                 });
@@ -332,6 +371,16 @@ class HomeScreen extends React.Component {
       console.log("Should be clearing speak");
       deactivateKeepAwake();
       Speech.stop();
+
+      var locationsForMsg = "";
+      for (var i = 0; i < this.state.msglist.length; i++) {
+        var name = this.state.msglist[i].name;
+        var url = this.state.msglist[i].url;
+        locationsForMsg += name + " \n" + "Link: " + url + " \n";
+      }
+
+      this.setState({ msgtosend: locationsForMsg });
+      console.log(locationsForMsg);
       this.setState({ inProgress: false, criticalSectionAvailable: true });
       this.stopTimer();
       this.dispatchTripDetails();
@@ -430,7 +479,9 @@ class HomeScreen extends React.Component {
                   type="primary"
                   height={30}
                   onPress={() => {
-                    //ADD EMAIL FUNCTION HERE
+                    //ADD sms FUNCTION HERE
+                    var recipient = "0123456789";
+                    this.sendSMSMsg(recipient, this.state.msgtosend);
                   }}
                 >
                   <Icon2 color="#ffffff" height={15} name="message" />
@@ -442,7 +493,13 @@ class HomeScreen extends React.Component {
                   type="primary"
                   height={30}
                   onPress={() => {
-                    //ADD EMAIL FUNCTION HERE
+                    //ADD email FUNCTION HERE
+                    var emailAddr = "";
+                    this.sendEmailMsg({
+                      recipients: emailAddr,
+                      subject: "Auto Narrator Trip Report",
+                      body: this.state.msgtosend,
+                    });
                   }}
                 >
                   <Icon2 color="#ffffff" height={15} name="letter" />
