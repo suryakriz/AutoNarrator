@@ -21,8 +21,8 @@ import * as Permissions from "expo-permissions";
 import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blue";
 import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
-import { mdiOrnament } from "@mdi/js";
 import moment from "moment";
+import Landmark from './Landmark'
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -47,6 +47,7 @@ class HomeScreen extends React.Component {
       intervalFunc: null,
       intervalSet: false,
       locationList: [],
+      locationList2: [],
       visitedList: props.visited,
       isVisible: false,
       date: "",
@@ -164,9 +165,15 @@ class HomeScreen extends React.Component {
                     landmarkDescription: landmarkInfo,
                     landmarkNumber: curLength + "",
                   });
+                  const locationList2 = state.locationList2.concat({
+                    landmarkName: locationName,
+                    landmarkDescription: landmarkInfo,
+                    landmarkNumber: curLength + "",
+                  });
 
                   return {
                     locationList,
+                    locationList2,
                     value: "",
                   };
                 });
@@ -224,6 +231,8 @@ class HomeScreen extends React.Component {
 
   //STOP TIMER
   stopTimer() {
+    console.log(this.state.locationList)
+    console.log(this.state.locationList2)
     this.setState({
       endtime: moment().format("hh:mm a"),
     });
@@ -257,6 +266,14 @@ class HomeScreen extends React.Component {
     this.props.dispatch(PastTripsAdd(curTrip));
     this.setState({
       locationList: [],
+    });
+    //console.log(locationList)
+   // console.log(locationList2)
+  }
+
+  clearLocationList(){
+    this.setState({
+      locationList2: [],
     });
   }
 
@@ -310,6 +327,19 @@ class HomeScreen extends React.Component {
     console.log("New Index: " + this.state.index);
   };
 
+  renderItem = ({item}) => (
+    <View style={styles.item}>
+      <Landmark
+          landmarkName={item.landmarkName}
+          landmarkDescription={item.landmarkDescription}
+        />
+    </View>
+   /* <View>
+      <Text>{item.landmarkName}</Text>
+      <Text>{item.landmarkDescription}</Text>
+    </View> */
+  )
+
   //WHAT IS ON THE SCREEN
   render() {
     if (this.state.fontsLoaded) {
@@ -325,7 +355,6 @@ class HomeScreen extends React.Component {
           >
             <View style={{ height: "95%" }}>
               <Text style={styles.panelHeader}> After Drive Summary! </Text>
-              <ScrollView style={styles.scroll}>
                 <View style={styles.header}>
                   <Icon color="#ffffff" height={20} name="car" />
                   <Text
@@ -364,7 +393,11 @@ class HomeScreen extends React.Component {
                     Landmark Report{" "}
                   </Text>
                 </View>
-              </ScrollView>
+                <FlatList
+                  data={this.state.locationList2}
+                  renderItem={this.renderItem}
+                  keyExtractor={item => item.landmarkNumber}
+                />
               <View style={styles.button}>
                 <AwesomeButtonBlue
                   progress
@@ -372,6 +405,7 @@ class HomeScreen extends React.Component {
                   height={40}
                   onPress={() => {
                     this.displayModal(!this.state.isVisible);
+                    this.clearLocationList();
                   }}
                 >
                   <Text style={styles.textButton}>Close Panel</Text>
@@ -495,5 +529,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 10,
+  },
+  item: {
+    marginVertical: 8,
+    marginHorizontal:10,
+    borderWidth: 1,
+    borderRadius: 10,  
   },
 });

@@ -26,8 +26,8 @@ export default class Landmark extends React.Component {
         mainIcon: true
     }
   }
-
-    //FONT STUFF
+  
+  //FONT STUFF
   state = {
     fontsLoaded: false,
   };
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     landname: {
       fontSize: 15,
       padding: 20,
+      marginRight: 15,
       fontFamily: "Quicksand-Regular",
     },
     landinfo: {
