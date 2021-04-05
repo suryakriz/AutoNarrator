@@ -16,13 +16,14 @@ import * as Speech from "expo-speech";
 import { connect, useDispatch } from "react-redux";
 import { VisitedListAdd } from "../Redux/VisitedSlice";
 import { PastTripsAdd, AddLandmarkToTrip } from "../Redux/PastTripsSlice";
-import Landmark from "./Landmark"
+import Landmark from "./Landmark";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blue";
 import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
 import moment from "moment";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 
 let customFonts = {
   "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -188,6 +189,9 @@ class HomeScreen extends React.Component {
                   };
                 });
                 this.props.dispatch(VisitedListAdd(locationName));
+                if (landmarkInfo.length >= 4000) {
+                  landmarkInfo = landmarkInfo.substr(0, 3999);
+                }
                 Speech.speak(landmarkInfo, {
                   voice: this.props.voice,
                   rate: this.props.speed,
@@ -231,8 +235,8 @@ class HomeScreen extends React.Component {
 
   //STOP TIMER
   stopTimer() {
-    console.log(this.state.locationList)
-    console.log(this.state.locationList2)
+    console.log(this.state.locationList);
+    console.log(this.state.locationList2);
     this.setState({
       endtime: moment().format("hh:mm a"),
     });
@@ -268,22 +272,22 @@ class HomeScreen extends React.Component {
       locationList: [],
     });
     //console.log(locationList)
-   // console.log(locationList2)
+    // console.log(locationList2)
   }
 
-  clearLocationList(){
+  clearLocationList() {
     this.setState({
       locationList2: [],
     });
   }
 
   //LAST DRIVE LANDMARK LIST
-  renderItem = ({item}) => (
+  renderItem = ({ item }) => (
     <Landmark
       landmarkName={item.landmarkName}
       landmarkDescription={item.landmarkDescription}
     />
-  )
+  );
 
   //SWITCHING BUTTONS
   OnButtonPress = () => {
@@ -308,7 +312,7 @@ class HomeScreen extends React.Component {
     }
     if (this.state.intervalSet == false) {
       this.startTimer();
-
+      activateKeepAwake();
       console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
@@ -326,6 +330,7 @@ class HomeScreen extends React.Component {
       clearInterval(this.state.intervalFunc);
       this.state.intervalFunc = null;
       console.log("Should be clearing speak");
+      deactivateKeepAwake();
       Speech.stop();
       this.setState({ inProgress: false, criticalSectionAvailable: true });
       this.stopTimer();
@@ -335,22 +340,24 @@ class HomeScreen extends React.Component {
     console.log("New Index: " + this.state.index);
   };
 
-  renderItem = ({item}) => (
+  renderItem = ({ item }) => (
     <View style={styles.item}>
       <Landmark
-          landmarkName={item.landmarkName}
-          landmarkDescription={item.landmarkDescription}
-        />
+        landmarkName={item.landmarkName}
+        landmarkDescription={item.landmarkDescription}
+      />
     </View>
-   /* <View>
+    /* <View>
       <Text>{item.landmarkName}</Text>
       <Text>{item.landmarkDescription}</Text>
     </View> */
-  )
+  );
 
   //WHAT IS ON THE SCREEN
   render() {
-    let lastDriveLandmarks = this.props.pastTrips[this.props.pastTrips.length - 1].landmarks;
+    let lastDriveLandmarks = this.props.pastTrips[
+      this.props.pastTrips.length - 1
+    ].landmarks;
     if (this.state.fontsLoaded) {
       return (
         <View style={styles.container}>
@@ -364,51 +371,60 @@ class HomeScreen extends React.Component {
           >
             <View style={{ height: "98%" }}>
               <Text style={styles.panelHeader}> After Drive Summary! </Text>
-                <View style={styles.header}>
-                  <Icon color="#ffffff" height={20} name="car" />
-                  <Text
-                    style={{
-                      marginLeft: "3%",
-                      color: "#ffffff",
-                      fontFamily: "Quicksand-Regular",
-                    }}
-                  >
-                    {" "}
-                    Drive Information{" "}
-                  </Text>
-                </View>
-                <Text style={styles.paneltext}>
-                  {"\u2022 Date: "} {this.state.date}
+              <View style={styles.header}>
+                <Icon color="#ffffff" height={20} name="car" />
+                <Text
+                  style={{
+                    marginLeft: "3%",
+                    color: "#ffffff",
+                    fontFamily: "Quicksand-Regular",
+                  }}
+                >
+                  {" "}
+                  Drive Information{" "}
                 </Text>
-                <Text style={styles.paneltext}>
-                  {"\u2022 Start Time: "} {this.state.starttime}
+              </View>
+              <Text style={styles.paneltext}>
+                {"\u2022 Date: "} {this.state.date}
+              </Text>
+              <Text style={styles.paneltext}>
+                {"\u2022 Start Time: "} {this.state.starttime}
+              </Text>
+              <Text style={styles.paneltext}>
+                {"\u2022 End Time: "} {this.state.endtime}
+              </Text>
+              <Text style={styles.paneltext}>
+                {"\u2022 Trip Length: "} {this.state.length}
+              </Text>
+              <View style={styles.header}>
+                <Icon2 color="#ffffff" height={20} name="achievement" />
+                <Text
+                  style={{
+                    marginLeft: "3%",
+                    color: "#ffffff",
+                    fontFamily: "Quicksand-Regular",
+                  }}
+                >
+                  {" "}
+                  Landmark Report{" "}
                 </Text>
-                <Text style={styles.paneltext}>
-                  {"\u2022 End Time: "} {this.state.endtime}
-                </Text>
-                <Text style={styles.paneltext}>
-                  {"\u2022 Trip Length: "} {this.state.length}
-                </Text>
-                <View style={styles.header}>
-                  <Icon2 color="#ffffff" height={20} name="achievement" />
-                  <Text
-                    style={{
-                      marginLeft: "3%",
-                      color: "#ffffff",
-                      fontFamily: "Quicksand-Regular",
-                    }}
-                  >
-                    {" "}
-                    Landmark Report{" "}
-                  </Text>
-                </View>
-                <FlatList
-                  data={this.state.locationList2}
-                  renderItem={this.renderItem}
-                  keyExtractor={item => item.landmarkNumber}
-                />
-              <View style={{marginHorizontal: "20%", marginVertical: "2%",flexDirection: "row", justifyContent: "space-between", alignItems: "center", textAlign: "center"}}>
-                <Text style={styles.paneltext}>Share Trip: </Text> 
+              </View>
+              <FlatList
+                data={this.state.locationList2}
+                renderItem={this.renderItem}
+                keyExtractor={(item) => item.landmarkNumber}
+              />
+              <View
+                style={{
+                  marginHorizontal: "20%",
+                  marginVertical: "2%",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+              >
+                <Text style={styles.paneltext}>Share Trip: </Text>
                 <AwesomeButtonBlue
                   progress
                   type="primary"
@@ -420,7 +436,7 @@ class HomeScreen extends React.Component {
                   <Icon2 color="#ffffff" height={15} name="message" />
                   <Text style={styles.textButtonsmall}>SMS</Text>
                 </AwesomeButtonBlue>
-                
+
                 <AwesomeButtonBlue
                   progress
                   type="primary"
@@ -548,7 +564,7 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Regular",
     color: "#fff",
     paddingRight: 5,
-    textAlign: "center"
+    textAlign: "center",
   },
   closeText: {
     fontSize: 24,
@@ -580,8 +596,8 @@ const styles = StyleSheet.create({
   },
   item: {
     marginVertical: 8,
-    marginHorizontal:10,
+    marginHorizontal: 10,
     borderWidth: 1,
-    borderRadius: 10,  
+    borderRadius: 10,
   },
 });
