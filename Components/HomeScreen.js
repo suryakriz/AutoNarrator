@@ -24,6 +24,7 @@ import AwesomeButtonBlue from "react-native-really-awesome-button/src/themes/blu
 import Icon from "react-native-ico-miscellaneous";
 import Icon2 from "react-native-ico-basic";
 import moment from "moment";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import * as SMS from "expo-sms";
 import * as MailComposer from "expo-mail-composer";
 
@@ -227,6 +228,9 @@ class HomeScreen extends React.Component {
                   };
                 });
                 this.props.dispatch(VisitedListAdd(locationName));
+                if (landmarkInfo.length >= 4000) {
+                  landmarkInfo = landmarkInfo.substr(0, 3999);
+                }
                 Speech.speak(landmarkInfo, {
                   voice: this.props.voice,
                   rate: this.props.speed,
@@ -347,7 +351,7 @@ class HomeScreen extends React.Component {
     }
     if (this.state.intervalSet == false) {
       this.startTimer();
-
+      activateKeepAwake();
       console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
@@ -365,6 +369,7 @@ class HomeScreen extends React.Component {
       clearInterval(this.state.intervalFunc);
       this.state.intervalFunc = null;
       console.log("Should be clearing speak");
+      deactivateKeepAwake();
       Speech.stop();
 
       var locationsForMsg = "";
