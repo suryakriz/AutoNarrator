@@ -404,9 +404,6 @@ class HomeScreen extends React.Component {
 
   //WHAT IS ON THE SCREEN
   render() {
-    let lastDriveLandmarks = this.props.pastTrips[
-      this.props.pastTrips.length - 1
-    ].landmarks;
     if (this.state.fontsLoaded) {
       return (
         <View style={styles.container}>
