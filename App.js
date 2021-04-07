@@ -6,11 +6,12 @@ import { StyleSheet, View, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import store from './Redux/Store'
+import returnStoreAndPersistor from './Redux/Store'
 import { Provider } from 'react-redux';
 
 
 const Tab = createBottomTabNavigator();
+const { store } = returnStoreAndPersistor();
 
 //BOTTOM TAB STUFF
 function MyTabs() {

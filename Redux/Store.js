@@ -1,26 +1,25 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { createStore, combineReducers } from '@reduxjs/toolkit'
 import VisitedReducer from './VisitedSlice'
 import SettingsReducer from './SettingsSlice'
 import PastTripsReducer from './PastTripsSlice'
-import { loadState, saveState } from './LocalStorage'
-import throttle from 'lodash/throttle';
+import { persistStore, persistReducer } from 'redux-persist'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const persistedState = loadState();
+rootReducer = combineReducers({
+    visited: VisitedReducer,
+    settings: SettingsReducer,
+    pastTrips: PastTripsReducer
+})
 
-const store = configureStore({ 
-    reducer: {
-        visited: VisitedReducer,
-        settings: SettingsReducer,
-        pastTrips: PastTripsReducer
-    }
-}, persistedState)
+const persistConfig = {
+    key: 'root',
+    storage: AsyncStorage
+}
+   
+const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-store.subscribe(throttle(() => {
-    saveState({
-      visited: store.getState().visited,
-      settings: store.getState().settings,
-      pastTrips: store.getState().pastTrips,
-    });
-  }, 1000));
-
-export default store
+export default () => {
+    let store = createStore(persistedReducer)
+    let persister = persistStore(store)
+    return { store, persister }
+}
