@@ -103,7 +103,6 @@ class HomeScreen extends React.Component {
   }
   //LOCATION STUFF
   getLocationAsync = async () => {
-    console.log("Getting Location");
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       this.setState({
@@ -112,19 +111,15 @@ class HomeScreen extends React.Component {
       return false;
     }
 
-    console.log("Getting Current Location");
     let location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
     const { latitude, longitude } = location.coords;
-    console.log(location);
-    //this.getGeocodeAsync({latitude, longitude})
     this.setState({
       location: { latitude, longitude },
       lat: latitude,
       long: longitude,
     });
-    console.log("Got Location");
     return true;
   };
 
@@ -142,13 +137,10 @@ class HomeScreen extends React.Component {
 
   //LOAD DATA AND SPEAK
   async loadData() {
-    console.log("Running Load Data");
-    console.log("Index: ", this.state.index);
+    //
     if (this.state.criticalSectionAvailable == true) {
-      console.log("Critical Section Available");
       this.state.criticalSectionAvailable = false;
       if (this.state.index == 1) {
-        console.log("Speaking State");
         const start = () => {
           this.setState({ inProgress: true });
         };
@@ -168,16 +160,12 @@ class HomeScreen extends React.Component {
             longitude +
             "&submit=Show+List";
           var response = await fetch(searchUrl);
-          console.log("Fetch Done");
           var htmlString = await response.text();
-          console.log("response Done");
           const listOfLocations = cheerio.load(htmlString)("a:even", "li");
-          console.log("load Done");
           var count = 0;
 
           while (count < listOfLocations.length) {
             if (!this.state.inProgress) {
-              console.log("Not Speaking");
               var location = listOfLocations.eq(count);
               var locationName = location.text();
               var locationUrl = "https://www.hmdb.org/" + location.attr("href");
@@ -187,7 +175,6 @@ class HomeScreen extends React.Component {
                   (item) => item.landmarkName == locationName
                 ).length == 0
               ) {
-                console.log("Not Visited Location");
                 response = await fetch(locationUrl);
                 htmlString = await response.text();
                 var landmarkInfo = cheerio
@@ -240,18 +227,15 @@ class HomeScreen extends React.Component {
                 this.state.criticalSectionAvailable = true;
                 return;
               } else {
-                console.log("Visited Location");
                 count = count + 1;
               }
             } else {
-              console.log("Currently Speaking");
               this.state.criticalSectionAvailable = true;
               return;
             }
           }
         }
       } else {
-        console.log("Stop Speaking");
         Speech.stop();
         this.setState({ inProgress: false });
         this.state.criticalSectionAvailable = true;
