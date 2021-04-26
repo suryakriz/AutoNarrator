@@ -114,6 +114,7 @@ class HomeScreen extends React.Component {
     let location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
+    console.log(location);
     const { latitude, longitude } = location.coords;
     this.setState({
       location: { latitude, longitude },
@@ -137,21 +138,24 @@ class HomeScreen extends React.Component {
 
   //LOAD DATA AND SPEAK
   async loadData() {
-    //
+    console.log("\n");
     if (this.state.criticalSectionAvailable == true) {
       this.state.criticalSectionAvailable = false;
       if (this.state.index == 1) {
+        console.log("System is running");
         const start = () => {
           this.setState({ inProgress: true });
         };
         const complete = () => {
           this.state.inProgress && this.setState({ inProgress: false });
         };
+        console.log("User location: ");
         var have_location = await this.getLocationAsync();
         var longitude = this.state.long;
         var latitude = this.state.lat;
 
         if (have_location) {
+          console.log("Location of user acquired");
           const cheerio = require("cheerio");
           const searchUrl =
             "https://www.hmdb.org/nearbylist.asp?nearby=yes&Latitude=" +
@@ -166,6 +170,7 @@ class HomeScreen extends React.Component {
 
           while (count < listOfLocations.length) {
             if (!this.state.inProgress) {
+              console.log("System is not speaking");
               var location = listOfLocations.eq(count);
               var locationName = location.text();
               var locationUrl = "https://www.hmdb.org/" + location.attr("href");
@@ -175,11 +180,14 @@ class HomeScreen extends React.Component {
                   (item) => item.landmarkName == locationName
                 ).length == 0
               ) {
+                console.log("Not Visited Location");
+                console.log("Selected: " + locationName);
                 response = await fetch(locationUrl);
                 htmlString = await response.text();
                 var landmarkInfo = cheerio
                   .load(htmlString)("#inscription1")
                   .text();
+                console.log(landmarkInfo);
                 let curLength = this.state.locationList.length;
                 this.setState((state) => {
                   const locationList = state.locationList.concat({
@@ -227,15 +235,18 @@ class HomeScreen extends React.Component {
                 this.state.criticalSectionAvailable = true;
                 return;
               } else {
+                console.log("Visited Location");
                 count = count + 1;
               }
             } else {
+              console.log("System is still speaking");
               this.state.criticalSectionAvailable = true;
               return;
             }
           }
         }
       } else {
+        console.log("System has been stopped by user");
         Speech.stop();
         this.setState({ inProgress: false });
         this.state.criticalSectionAvailable = true;
@@ -258,8 +269,6 @@ class HomeScreen extends React.Component {
 
   //STOP TIMER
   stopTimer() {
-    console.log(this.state.locationList);
-    console.log(this.state.locationList2);
     this.setState({
       endtime: moment().format("hh:mm a"),
     });
@@ -294,8 +303,6 @@ class HomeScreen extends React.Component {
     this.setState({
       locationList: [],
     });
-    //console.log(locationList)
-    // console.log(locationList2)
   }
 
   clearLocationList() {
@@ -339,7 +346,6 @@ class HomeScreen extends React.Component {
       console.log("Interval func not set therefore setting");
       this.state.intervalSet = true;
       this.state.intervalFunc = setInterval(() => {
-        console.log("interval: ", this.props.timeBetween);
         if (this.state.index == 0) {
           console.log("Exiting Interval");
           return;
@@ -364,7 +370,6 @@ class HomeScreen extends React.Component {
       }
 
       this.setState({ msgtosend: locationsForMsg });
-      console.log(locationsForMsg);
       this.setState({ inProgress: false, criticalSectionAvailable: true });
       this.stopTimer();
       this.dispatchTripDetails();
