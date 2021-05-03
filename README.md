@@ -1,6 +1,6 @@
 # AutoNarrator
 
-To run our app you must follow the following steps:\n
+To run our app you must follow the following steps:
 1.First you must pull the project into your text editorof choice like VSCode
 2.Make sure you have an android emulator downloadedand set up with an instancea.Personally, I used Android Studiohttps://developer.android.com/studio
 3.Make sure NodeJS is installeda.You can do this with “npm -v”  in the terminalb.If you do not have it downloaded, you can find installationguides here:https://nodejs.org/en/download/
